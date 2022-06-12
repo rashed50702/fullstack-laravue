@@ -399,6 +399,10 @@ p {
       font-size: 19px;
       margin-right: 8px;
   }
+  .router-link-exact-active{
+
+  }
+  
   ._1side_menu_list_ul li a:hover{
       color: #dcdcdc;
   }
@@ -3075,3 +3079,8 @@ p {
       width: 319px;
   }
   
+  .router-link-exact-active{
+    background-color: #e8eaed;
+    color: #2461a1 !important;
+    border-right: 3px solid #2461a1 !important;
+  }
