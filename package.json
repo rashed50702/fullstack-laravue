@@ -17,6 +17,7 @@
         "vue-loader": "^16.8.3"
     },
     "dependencies": {
+        "view-ui-plus": "^1.2.0-beta.4",
         "vue": "^3.2.37",
         "vue-router": "^4.0.16"
     }
