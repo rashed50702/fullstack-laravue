@@ -448,7 +448,7 @@ p {
       height: 55px;
       position: fixed;
       width: 100%;
-      z-index: 11111;
+      z-index: 1;
       padding-left: 248px;
       top: 0px;
       left: 0px;
@@ -3090,4 +3090,10 @@ p {
     background-color: #e8eaed;
     color: #2461a1 !important;
     border-right: 3px solid #2461a1 !important;
+  }
+  .ml-2{
+    margin-left: 2px;
+  }
+  .ivu-form .ivu-form-item-label{
+    padding-bottom: 0px !important;
   }
