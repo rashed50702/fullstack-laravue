@@ -17,21 +17,22 @@
 					</tr>
 
 					<!-- TABLE ITEMS -->
-					<tr v-for="(tag, index) in tags" :key="tag.id" v-if="tags.length">
-						<td>{{index + 1}}</td>
+					<tr v-for="(tag, i) in tags" :key="i" v-if="tags.length">
+						<td>{{i + 1}}</td>
 						<td class="_table_name">{{tag.tagName}} - {{tag.id}}</td>
 						<td>{{tag.created_at}}</td>
 						<td class="text-center">
-							<button class="_btn _action_btn edit_btn1" type="button">Edit</button>
-							<button class="_btn _action_btn make_btn1 ml-2" type="button">Delete</button>
+							<button class="_btn _action_btn edit_btn1" type="button"
+								@click="showEditModal(tag, i)">Edit</button>
+							<button class="_btn _action_btn make_btn1 ml-2" type="button"
+								@click="deleteData(tag, i)" :loading="tag.isDeleting">Delete</button>
 						</td>
 					</tr>
 				</table>
 			</div>
 		</div>
 
-		<!--Modal-->
-
+		<!--Adding Modal-->
 		<Modal v-model="modal" title="Add Tag" :mask-closable="false" :closable="false" footer-hide>
 			<Form>
 				<FormItem label="Tag Name">
@@ -46,6 +47,22 @@
 			</footer>
 		</Modal>
 
+
+		<!--Editing Modal-->
+		<Modal v-model="editModal" title="Edit Tag" :mask-closable="false" :closable="false" footer-hide>
+			<Form>
+				<FormItem label="Tag Name">
+					<Input v-model="formDataEdit.tagName"></Input>
+				</FormItem>
+			</Form>
+
+			<footer class="text-right">
+				<Button type="default" size="small" @click="editModal = false">Cancel</Button>
+				<Button type="success" size="small" class="ml-2" @click="updatingData" :disabled="isSaving"
+					:loading="isSaving">{{isSaving ? 'Saving...' : 'Save'}}</Button>
+			</footer>
+		</Modal>
+
 	</div>
 </template>
 
@@ -54,11 +71,16 @@ export default{
 	data(){
 		return{
 			modal: false,
+			editModal: false,
 			isSaving: false,
 			tags: [],
 			formData: {
 				tagName: ''
-			}
+			},
+			formDataEdit: {
+				tagName: ''
+			},
+			index: -1
 		}
 	},
 
@@ -73,19 +95,72 @@ export default{
 	methods:{
 		async savingData(){
 			if (this.formData.tagName.trim() == '')
-				return this.error('Tag name is required');
+				return this.err('Tag name is required');
+
 			const res = await this.callAPI('post', 'tags', this.formData)
-			if (res.status == 201) {
+			if (res.status === 201) {
 				this.tags.unshift(res.data);
 				this.success("Tag saved successfully!");
 				this.modal = false;
 				this.formData.tagName = '';
-			} else {
-				this.err();
+			}else{
+				if(res.status === 422){
+					let errors = res.data.errors;
+					for (let field of Object.keys(errors)) {
+						this.err(errors[field]);
+					}
+				}else{
+					this.err("Oops!", "Something went wrong!");
+				}
 			}
 		},
 
+		async updatingData() {
+			if (this.formDataEdit.tagName.trim() == '')
+				return this.err('Tag name is required');
 
+			const res = await this.callAPI('post', 'tag-edit', this.formDataEdit)
+			
+			if (res.status === 200) {
+				if(res.data.status === 422){
+					let errors = res.data.errors;
+					for (let field of Object.keys(errors)) {
+						this.err(errors[field]);
+					}
+				}else{
+					this.tags[this.index].tagName = this.formDataEdit.tagName;
+					this.success("Tag updated successfully!");
+					this.editModal = false;
+				}
+			} else {
+				this.err("Oops!", "Something went wrong!");
+			}
+		},
+
+		showEditModal(tag, index){
+			let obj = {
+				id: tag.id,
+				tagName: tag.tagName
+			}
+			this.formDataEdit = obj;
+			this.editModal = true;
+			this.index = index;
+		},
+
+		async deleteData(tag, i){
+
+			// return tag.isDeleting = true;
+			// return this.$set(tag, 'isDeleting', true)
+			if(!confirm('Are you sure?')) return
+			// this.$set(this.tag, 'isDeleting', true)
+			const res = await this.callAPI('post', 'delete-tag', tag)
+			if(res.status === 200){
+				this.tags.splice(i, 1);
+				this.success("Tag has been deleted successfully!");
+			}else{
+				this.err("Something went wrong")
+			}
+		}
 	}
 }
 </script>

@@ -2,8 +2,10 @@
 
 namespace App\Http\Controllers;
 
-use Illuminate\Http\Request;
 use App\Models\Tag;
+use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Response;
+use Illuminate\Support\Facades\Validator;
 
 class TagController extends Controller
 {
@@ -34,9 +36,18 @@ class TagController extends Controller
      */
     public function store(Request $request)
     {
-        return Tag::create([
+        $validator = Validator::make($request->all(), [
+            'tagName' => 'required|unique:tags',
+        ]);
+
+        if ($validator->fails()) {
+            return Response::json(['errors' => $validator->errors()->all(), 'status' => 422]);
+        }
+        $data = Tag::create([
             'tagName' => $request->tagName
         ]);
+
+        return $data;
     }
 
     /**
@@ -68,9 +79,36 @@ class TagController extends Controller
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function update(Request $request, $id)
+    public function update(Request $request)
     {
-        //
+        $validator = Validator::make($request->all(), [
+            'id' => 'required',
+            'tagName' => 'required|unique:tags,tagName,' . $request->id,
+
+        ]);
+
+        if ($validator->fails()) {
+            return Response::json(['errors' => $validator->errors()->all(), 'status' => 422]);
+        }
+        $data = Tag::where('id', $request->id)->update([
+            'tagName' => $request->tagName
+        ]);
+
+        return $data;
+    }
+
+    public function deleteTag(Request $request)
+    {
+        $validator = Validator::make($request->all(), [
+            'id' => 'required',
+
+        ]);
+
+        if ($validator->fails()) {
+            return Response::json(['errors' => $validator->errors()->all(), 'status' => 422]);
+        }
+        $data = Tag::where('id', $request->id)->delete();
+        return $data;
     }
 
     /**

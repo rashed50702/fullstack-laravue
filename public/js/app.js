@@ -19869,11 +19869,16 @@ function _asyncToGenerator(fn) { return function () { var self = this, args = ar
   data: function data() {
     return {
       modal: false,
+      editModal: false,
       isSaving: false,
       tags: [],
       formData: {
         tagName: ''
-      }
+      },
+      formDataEdit: {
+        tagName: ''
+      },
+      index: -1
     };
   },
   created: function created() {
@@ -19910,7 +19915,8 @@ function _asyncToGenerator(fn) { return function () { var self = this, args = ar
       var _this2 = this;
 
       return _asyncToGenerator( /*#__PURE__*/_regeneratorRuntime().mark(function _callee2() {
-        var res;
+        var res, errors, _i, _Object$keys, field;
+
         return _regeneratorRuntime().wrap(function _callee2$(_context2) {
           while (1) {
             switch (_context2.prev = _context2.next) {
@@ -19920,7 +19926,7 @@ function _asyncToGenerator(fn) { return function () { var self = this, args = ar
                   break;
                 }
 
-                return _context2.abrupt("return", _this2.error('Tag name is required'));
+                return _context2.abrupt("return", _this2.err('Tag name is required'));
 
               case 2:
                 _context2.next = 4;
@@ -19929,7 +19935,7 @@ function _asyncToGenerator(fn) { return function () { var self = this, args = ar
               case 4:
                 res = _context2.sent;
 
-                if (res.status == 201) {
+                if (res.status === 201) {
                   _this2.tags.unshift(res.data);
 
                   _this2.success("Tag saved successfully!");
@@ -19937,7 +19943,17 @@ function _asyncToGenerator(fn) { return function () { var self = this, args = ar
                   _this2.modal = false;
                   _this2.formData.tagName = '';
                 } else {
-                  _this2.err();
+                  if (res.status === 422) {
+                    errors = res.data.errors;
+
+                    for (_i = 0, _Object$keys = Object.keys(errors); _i < _Object$keys.length; _i++) {
+                      field = _Object$keys[_i];
+
+                      _this2.err(errors[field]);
+                    }
+                  } else {
+                    _this2.err("Oops!", "Something went wrong!");
+                  }
                 }
 
               case 6:
@@ -19946,6 +19962,106 @@ function _asyncToGenerator(fn) { return function () { var self = this, args = ar
             }
           }
         }, _callee2);
+      }))();
+    },
+    updatingData: function updatingData() {
+      var _this3 = this;
+
+      return _asyncToGenerator( /*#__PURE__*/_regeneratorRuntime().mark(function _callee3() {
+        var res, errors, _i2, _Object$keys2, field;
+
+        return _regeneratorRuntime().wrap(function _callee3$(_context3) {
+          while (1) {
+            switch (_context3.prev = _context3.next) {
+              case 0:
+                if (!(_this3.formDataEdit.tagName.trim() == '')) {
+                  _context3.next = 2;
+                  break;
+                }
+
+                return _context3.abrupt("return", _this3.err('Tag name is required'));
+
+              case 2:
+                _context3.next = 4;
+                return _this3.callAPI('post', 'tag-edit', _this3.formDataEdit);
+
+              case 4:
+                res = _context3.sent;
+
+                if (res.status === 200) {
+                  if (res.data.status === 422) {
+                    errors = res.data.errors;
+
+                    for (_i2 = 0, _Object$keys2 = Object.keys(errors); _i2 < _Object$keys2.length; _i2++) {
+                      field = _Object$keys2[_i2];
+
+                      _this3.err(errors[field]);
+                    }
+                  } else {
+                    _this3.tags[_this3.index].tagName = _this3.formDataEdit.tagName;
+
+                    _this3.success("Tag updated successfully!");
+
+                    _this3.editModal = false;
+                  }
+                } else {
+                  _this3.err("Oops!", "Something went wrong!");
+                }
+
+              case 6:
+              case "end":
+                return _context3.stop();
+            }
+          }
+        }, _callee3);
+      }))();
+    },
+    showEditModal: function showEditModal(tag, index) {
+      var obj = {
+        id: tag.id,
+        tagName: tag.tagName
+      };
+      this.formDataEdit = obj;
+      this.editModal = true;
+      this.index = index;
+    },
+    deleteData: function deleteData(tag, i) {
+      var _this4 = this;
+
+      return _asyncToGenerator( /*#__PURE__*/_regeneratorRuntime().mark(function _callee4() {
+        var res;
+        return _regeneratorRuntime().wrap(function _callee4$(_context4) {
+          while (1) {
+            switch (_context4.prev = _context4.next) {
+              case 0:
+                if (confirm('Are you sure?')) {
+                  _context4.next = 2;
+                  break;
+                }
+
+                return _context4.abrupt("return");
+
+              case 2:
+                _context4.next = 4;
+                return _this4.callAPI('post', 'delete-tag', tag);
+
+              case 4:
+                res = _context4.sent;
+
+                if (res.status === 200) {
+                  _this4.tags.splice(i, 1);
+
+                  _this4.success("Tag has been deleted successfully!");
+                } else {
+                  _this4.err("Something went wrong");
+                }
+
+              case 6:
+              case "end":
+                return _context4.stop();
+            }
+          }
+        }, _callee4);
       }))();
     }
   }
@@ -20219,24 +20335,22 @@ var _hoisted_8 = /*#__PURE__*/(0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementV
 var _hoisted_9 = {
   "class": "_table_name"
 };
-
-var _hoisted_10 = /*#__PURE__*/(0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("td", {
+var _hoisted_10 = {
   "class": "text-center"
-}, [/*#__PURE__*/(0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("button", {
-  "class": "_btn _action_btn edit_btn1",
-  type: "button"
-}, "Edit"), /*#__PURE__*/(0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("button", {
-  "class": "_btn _action_btn make_btn1 ml-2",
-  type: "button"
-}, "Delete")], -1
-/* HOISTED */
-);
-
-var _hoisted_11 = {
+};
+var _hoisted_11 = ["onClick"];
+var _hoisted_12 = ["onClick", "loading"];
+var _hoisted_13 = {
   "class": "text-right"
 };
 
-var _hoisted_12 = /*#__PURE__*/(0,vue__WEBPACK_IMPORTED_MODULE_0__.createTextVNode)("Cancel");
+var _hoisted_14 = /*#__PURE__*/(0,vue__WEBPACK_IMPORTED_MODULE_0__.createTextVNode)("Cancel");
+
+var _hoisted_15 = {
+  "class": "text-right"
+};
+
+var _hoisted_16 = /*#__PURE__*/(0,vue__WEBPACK_IMPORTED_MODULE_0__.createTextVNode)("Cancel");
 
 function render(_ctx, _cache, $props, $setup, $data, $options) {
   var _component_Icon = (0,vue__WEBPACK_IMPORTED_MODULE_0__.resolveComponent)("Icon");
@@ -20268,19 +20382,36 @@ function render(_ctx, _cache, $props, $setup, $data, $options) {
 
   })]), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("div", _hoisted_6, [(0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("table", _hoisted_7, [(0,vue__WEBPACK_IMPORTED_MODULE_0__.createCommentVNode)(" TABLE TITLE "), _hoisted_8, (0,vue__WEBPACK_IMPORTED_MODULE_0__.createCommentVNode)(" TABLE ITEMS "), $data.tags.length ? ((0,vue__WEBPACK_IMPORTED_MODULE_0__.openBlock)(true), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementBlock)(vue__WEBPACK_IMPORTED_MODULE_0__.Fragment, {
     key: 0
-  }, (0,vue__WEBPACK_IMPORTED_MODULE_0__.renderList)($data.tags, function (tag, index) {
+  }, (0,vue__WEBPACK_IMPORTED_MODULE_0__.renderList)($data.tags, function (tag, i) {
     return (0,vue__WEBPACK_IMPORTED_MODULE_0__.openBlock)(), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementBlock)("tr", {
-      key: tag.id
-    }, [(0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("td", null, (0,vue__WEBPACK_IMPORTED_MODULE_0__.toDisplayString)(index + 1), 1
+      key: i
+    }, [(0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("td", null, (0,vue__WEBPACK_IMPORTED_MODULE_0__.toDisplayString)(i + 1), 1
     /* TEXT */
     ), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("td", _hoisted_9, (0,vue__WEBPACK_IMPORTED_MODULE_0__.toDisplayString)(tag.tagName) + " - " + (0,vue__WEBPACK_IMPORTED_MODULE_0__.toDisplayString)(tag.id), 1
     /* TEXT */
     ), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("td", null, (0,vue__WEBPACK_IMPORTED_MODULE_0__.toDisplayString)(tag.created_at), 1
     /* TEXT */
-    ), _hoisted_10]);
+    ), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("td", _hoisted_10, [(0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("button", {
+      "class": "_btn _action_btn edit_btn1",
+      type: "button",
+      onClick: function onClick($event) {
+        return $options.showEditModal(tag, i);
+      }
+    }, "Edit", 8
+    /* PROPS */
+    , _hoisted_11), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("button", {
+      "class": "_btn _action_btn make_btn1 ml-2",
+      type: "button",
+      onClick: function onClick($event) {
+        return $options.deleteData(tag, i);
+      },
+      loading: tag.isDeleting
+    }, "Delete", 8
+    /* PROPS */
+    , _hoisted_12)])]);
   }), 128
   /* KEYED_FRAGMENT */
-  )) : (0,vue__WEBPACK_IMPORTED_MODULE_0__.createCommentVNode)("v-if", true)])])]), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createCommentVNode)("Modal"), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createVNode)(_component_Modal, {
+  )) : (0,vue__WEBPACK_IMPORTED_MODULE_0__.createCommentVNode)("v-if", true)])])]), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createCommentVNode)("Adding Modal"), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createVNode)(_component_Modal, {
     modelValue: $data.modal,
     "onUpdate:modelValue": _cache[3] || (_cache[3] = function ($event) {
       return $data.modal = $event;
@@ -20314,7 +20445,7 @@ function render(_ctx, _cache, $props, $setup, $data, $options) {
         _: 1
         /* STABLE */
 
-      }), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("footer", _hoisted_11, [(0,vue__WEBPACK_IMPORTED_MODULE_0__.createVNode)(_component_Button, {
+      }), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("footer", _hoisted_13, [(0,vue__WEBPACK_IMPORTED_MODULE_0__.createVNode)(_component_Button, {
         type: "default",
         size: "small",
         onClick: _cache[2] || (_cache[2] = function ($event) {
@@ -20322,7 +20453,7 @@ function render(_ctx, _cache, $props, $setup, $data, $options) {
         })
       }, {
         "default": (0,vue__WEBPACK_IMPORTED_MODULE_0__.withCtx)(function () {
-          return [_hoisted_12];
+          return [_hoisted_14];
         }),
         _: 1
         /* STABLE */
@@ -20332,6 +20463,78 @@ function render(_ctx, _cache, $props, $setup, $data, $options) {
         size: "small",
         "class": "ml-2",
         onClick: $options.savingData,
+        disabled: $data.isSaving,
+        loading: $data.isSaving
+      }, {
+        "default": (0,vue__WEBPACK_IMPORTED_MODULE_0__.withCtx)(function () {
+          return [(0,vue__WEBPACK_IMPORTED_MODULE_0__.createTextVNode)((0,vue__WEBPACK_IMPORTED_MODULE_0__.toDisplayString)($data.isSaving ? 'Saving...' : 'Save'), 1
+          /* TEXT */
+          )];
+        }),
+        _: 1
+        /* STABLE */
+
+      }, 8
+      /* PROPS */
+      , ["onClick", "disabled", "loading"])])];
+    }),
+    _: 1
+    /* STABLE */
+
+  }, 8
+  /* PROPS */
+  , ["modelValue"]), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createCommentVNode)("Editing Modal"), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createVNode)(_component_Modal, {
+    modelValue: $data.editModal,
+    "onUpdate:modelValue": _cache[6] || (_cache[6] = function ($event) {
+      return $data.editModal = $event;
+    }),
+    title: "Edit Tag",
+    "mask-closable": false,
+    closable: false,
+    "footer-hide": ""
+  }, {
+    "default": (0,vue__WEBPACK_IMPORTED_MODULE_0__.withCtx)(function () {
+      return [(0,vue__WEBPACK_IMPORTED_MODULE_0__.createVNode)(_component_Form, null, {
+        "default": (0,vue__WEBPACK_IMPORTED_MODULE_0__.withCtx)(function () {
+          return [(0,vue__WEBPACK_IMPORTED_MODULE_0__.createVNode)(_component_FormItem, {
+            label: "Tag Name"
+          }, {
+            "default": (0,vue__WEBPACK_IMPORTED_MODULE_0__.withCtx)(function () {
+              return [(0,vue__WEBPACK_IMPORTED_MODULE_0__.createVNode)(_component_Input, {
+                modelValue: $data.formDataEdit.tagName,
+                "onUpdate:modelValue": _cache[4] || (_cache[4] = function ($event) {
+                  return $data.formDataEdit.tagName = $event;
+                })
+              }, null, 8
+              /* PROPS */
+              , ["modelValue"])];
+            }),
+            _: 1
+            /* STABLE */
+
+          })];
+        }),
+        _: 1
+        /* STABLE */
+
+      }), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("footer", _hoisted_15, [(0,vue__WEBPACK_IMPORTED_MODULE_0__.createVNode)(_component_Button, {
+        type: "default",
+        size: "small",
+        onClick: _cache[5] || (_cache[5] = function ($event) {
+          return $data.editModal = false;
+        })
+      }, {
+        "default": (0,vue__WEBPACK_IMPORTED_MODULE_0__.withCtx)(function () {
+          return [_hoisted_16];
+        }),
+        _: 1
+        /* STABLE */
+
+      }), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createVNode)(_component_Button, {
+        type: "success",
+        size: "small",
+        "class": "ml-2",
+        onClick: $options.updatingData,
         disabled: $data.isSaving,
         loading: $data.isSaving
       }, {
