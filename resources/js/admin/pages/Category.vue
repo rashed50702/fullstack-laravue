@@ -1,7 +1,7 @@
 <template>
     <div class="content">
         <div class="_1adminOverveiw_table_recent _box_shadow _border_radious _mar_b30 _p20">
-            <p class="_title0">Tags
+            <p class="_title0">Categories
                 <Button type="default" size="small" @click="modal = true">
                     <Icon type="ios-add" />Add New
                 </Button>
@@ -11,7 +11,7 @@
                     <!-- TABLE TITLE -->
                     <tr>
                         <th>#</th>
-                        <th>Tag Name</th>
+                        <th>Category Name</th>
                         <th>Created At</th>
                         <th class="text-center">Action</th>
                     </tr>
@@ -33,11 +33,31 @@
         </div>
 
         <!--Adding Modal-->
-        <Modal v-model="modal" title="Add Tag" :mask-closable="false" :closable="false" footer-hide>
+        <Modal v-model="modal" title="Add Category" :mask-closable="false" :closable="false" footer-hide>
             <Form>
-                <FormItem label="Tag Name">
+                <FormItem label="Category Name">
                     <Input v-model="formData.tagName"></Input>
                 </FormItem>
+
+                <Upload type="drag" :headers="{ 'x-csrf-token': token, 'X-Requested-With':'XMLHttpRequest'}"
+                    :on-success="handleSuccess" :on-error="handleError" :format="['jpg','jpeg','png']"
+                    :on-format-error="handleFormatError" :max-size="2048" :on-exceeded-size="handleMaxSize"
+                    ref="clearUpload"
+                    action="category-img-upload">
+                    <div style="padding: 20px 0">
+                        <Icon type="ios-cloud-upload" size="52" style="color: #3399ff"></Icon>
+                        <p>Click or drag files here to upload</p>
+                    </div>
+                </Upload>
+                <div class="demo-upload-list" v-if="formData.iconImage">
+                    <img :src="`/uploads/${formData.iconImage}`" alt="Image" />
+                    <div class="demo-upload-list-cover">
+                        <Icon type="ios-trash-outline" @click="deleteImage"></Icon>
+                    </div>
+                </div>
+                <div class="image_thumb">
+
+                </div>
             </Form>
 
             <footer class="text-right">
@@ -93,7 +113,8 @@ export default {
             isSaving: false,
             tags: [],
             formData: {
-                tagName: ''
+                iconImage: '',
+                categoryName: ''
             },
             formDataEdit: {
                 tagName: ''
@@ -102,11 +123,13 @@ export default {
             deletingModal: false,
             deleteItem: {},
             isDeleting: false,
-            deletingIndex: -1
+            deletingIndex: -1,
+            token: '',
         }
     },
 
     async created() {
+        this.token = window.Laravel.csrfToken;
         const res = await this.callAPI('get', 'tag-list');
         if (res.status == 200) {
             this.tags = res.data;
@@ -115,6 +138,39 @@ export default {
         }
     },
     methods: {
+        handleSuccess(res, file) {
+            this.formData.iconImage = res;
+        },
+        handleError(res, file) {
+            this.$Notice.warning({
+                title: 'The file format is incorrect',
+                desc: `${file.errors.file.length ? file.errors.file[0]: 'Something went wrong!'}`
+            });
+        },
+        handleFormatError(file) {
+            this.$Notice.warning({
+                title: 'The file format is incorrect',
+                desc: 'File format of ' + file.name + ' is incorrect, please select jpg or png.'
+            });
+        },
+        handleMaxSize(file) {
+            this.$Notice.warning({
+                title: 'Exceeding file size limit',
+                desc: 'File  ' + file.name + ' is too large, no more than 2M.'
+            });
+        },
+
+        async deleteImage(){
+            let image = this.formData.iconImage;
+            this.formData.iconImage = '';
+            this.$refs.clearUpload.clearFiles();
+            const res = await this.callAPI('post', 'delete-image', {imageName:image});
+            if(res.status != 200){
+                this.formData.iconImage = image;
+                this.err();
+            }
+        },
+
         async savingData() {
             if (this.formData.tagName.trim() == '')
                 return this.err('Tag name is required');
@@ -189,3 +245,45 @@ export default {
     }
 }
 </script>
+<style>
+.demo-upload-list {
+    display: inline-block;
+    width: 100px;
+    height: 100px;
+    text-align: center;
+    line-height: 100px;
+    border: 1px solid transparent;
+    border-radius: 4px;
+    overflow: hidden;
+    background: #fff;
+    position: relative;
+    box-shadow: 0 1px 1px rgba(0, 0, 0, .2);
+    margin-right: 4px;
+}
+    
+.demo-upload-list img {
+    width: 100%;
+    height: 100%;
+}
+    
+.demo-upload-list-cover {
+    display: none;
+    position: absolute;
+    top: 0;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    background: rgba(0, 0, 0, .6);
+}
+    
+.demo-upload-list:hover .demo-upload-list-cover {
+    display: block;
+}
+    
+.demo-upload-list-cover i {
+    color: #fff;
+    font-size: 20px;
+    cursor: pointer;
+    margin: 0 2px;
+}
+</style>
