@@ -16,6 +16,8 @@ Route::post('tag-edit', [TagController::class, 'update']);
 Route::post('delete-tag', [TagController::class, 'deleteTag']);
 Route::post('category-img-upload', [CategoryController::class, 'imgUpload']);
 Route::post('delete-image', [CategoryController::class, 'deleteImage']);
+Route::post('category-save', [CategoryController::class, 'store']);
+Route::get('categories-list', [CategoryController::class, 'index']);
 
 
 Route::get('{slug}', function () {

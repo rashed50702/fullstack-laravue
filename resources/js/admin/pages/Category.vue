@@ -11,21 +11,25 @@
                     <!-- TABLE TITLE -->
                     <tr>
                         <th>#</th>
+                        <th>Icon Image</th>
                         <th>Category Name</th>
                         <th>Created At</th>
                         <th class="text-center">Action</th>
                     </tr>
 
                     <!-- TABLE ITEMS -->
-                    <tr v-for="(tag, i) in tags" :key="i" v-if="tags.length">
+                    <tr v-for="(category, i) in categories" :key="i" v-if="categories.length">
                         <td>{{ i + 1 }}</td>
-                        <td class="_table_name">{{ tag.tagName }} - {{ tag.id }}</td>
-                        <td>{{ tag.created_at }}</td>
+                        <td class="table_image">
+                            <img :src="category.iconImage" alt="Image" v-if="category.iconImage">
+                        </td>
+                        <td class="_table_name">{{ category.categoryName }}</td>
+                        <td>{{ category.created_at }}</td>
                         <td class="text-center">
                             <button class="_btn _action_btn edit_btn1" type="button"
-                                @click="showEditModal(tag, i)">Edit</button>
+                                @click="showEditModal(category, i)">Edit</button>
                             <button class="_btn _action_btn make_btn1 ml-2" type="button"
-                                @click="showDeletingModal(tag, i)" :loading="tag.isDeleting">Delete</button>
+                                @click="showDeletingModal(category, i)" :loading="category.isDeleting">Delete</button>
                         </td>
                     </tr>
                 </table>
@@ -36,14 +40,13 @@
         <Modal v-model="modal" title="Add Category" :mask-closable="false" :closable="false" footer-hide>
             <Form>
                 <FormItem label="Category Name">
-                    <Input v-model="formData.tagName"></Input>
+                    <Input v-model="formData.categoryName"></Input>
                 </FormItem>
 
                 <Upload type="drag" :headers="{ 'x-csrf-token': token, 'X-Requested-With':'XMLHttpRequest'}"
                     :on-success="handleSuccess" :on-error="handleError" :format="['jpg','jpeg','png']"
                     :on-format-error="handleFormatError" :max-size="2048" :on-exceeded-size="handleMaxSize"
-                    ref="clearUpload"
-                    action="category-img-upload">
+                    ref="clearUpload" action="category-img-upload">
                     <div style="padding: 20px 0">
                         <Icon type="ios-cloud-upload" size="52" style="color: #3399ff"></Icon>
                         <p>Click or drag files here to upload</p>
@@ -111,7 +114,7 @@ export default {
             modal: false,
             editModal: false,
             isSaving: false,
-            tags: [],
+            categories: [],
             formData: {
                 iconImage: '',
                 categoryName: ''
@@ -130,9 +133,9 @@ export default {
 
     async created() {
         this.token = window.Laravel.csrfToken;
-        const res = await this.callAPI('get', 'tag-list');
+        const res = await this.callAPI('get', 'categories-list');
         if (res.status == 200) {
-            this.tags = res.data;
+            this.categories = res.data;
         } else {
             this.err();
         }
@@ -172,15 +175,19 @@ export default {
         },
 
         async savingData() {
-            if (this.formData.tagName.trim() == '')
-                return this.err('Tag name is required');
+            if (this.formData.categoryName.trim() == '')
+                return this.err('Category name is required');
+            if (this.formData.iconImage.trim() == '')
+                return this.err('Icon image is required');
+            this.formData.iconImage = `/uploads/${this.formData.iconImage}`;
 
-            const res = await this.callAPI('post', 'tags', this.formData)
+            const res = await this.callAPI('post', 'category-save', this.formData)
             if (res.status === 201) {
-                this.tags.unshift(res.data);
-                this.success("Tag saved successfully!");
+                this.categories.unshift(res.data);
+                this.success("Category saved successfully!");
                 this.modal = false;
-                this.formData.tagName = '';
+                this.formData.categoryName = '';
+                this.formData.iconImage = '';
             } else {
                 if (res.status === 422) {
                     let errors = res.data.errors;

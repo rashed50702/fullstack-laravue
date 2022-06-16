@@ -3097,3 +3097,7 @@ p {
   .ivu-form .ivu-form-item-label{
     padding-bottom: 0px !important;
   }
+  .table_image img{
+    width: 60px;
+    height: 60px;
+  }

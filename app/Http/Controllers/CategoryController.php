@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Category;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Response;
 use Illuminate\Support\Facades\Validator;
@@ -15,7 +16,7 @@ class CategoryController extends Controller
      */
     public function index()
     {
-        //
+        return Category::orderBy('id', 'desc')->get();
     }
 
 
@@ -64,7 +65,20 @@ class CategoryController extends Controller
      */
     public function store(Request $request)
     {
-        //
+        $validator = Validator::make($request->all(), [
+            'categoryName' => 'required|unique:categories',
+            'iconImage' => 'required',
+        ]);
+
+        if ($validator->fails()) {
+            return Response::json(['errors' => $validator->errors()->all(), 'status' => 422]);
+        }
+        $data = Category::create([
+            'categoryName' => $request->categoryName,
+            'iconImage' => $request->iconImage,
+        ]);
+
+        return $data;
     }
 
     /**
