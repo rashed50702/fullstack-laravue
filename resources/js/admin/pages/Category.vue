@@ -53,7 +53,7 @@
                     </div>
                 </Upload>
                 <div class="demo-upload-list" v-if="formData.iconImage">
-                    <img :src="`/uploads/${formData.iconImage}`" alt="Image" />
+                    <img :src="`${formData.iconImage}`" alt="Image" />
                     <div class="demo-upload-list-cover">
                         <Icon type="ios-trash-outline" @click="deleteImage"></Icon>
                     </div>
@@ -61,29 +61,49 @@
                 <div class="image_thumb">
 
                 </div>
+
+                <footer class="text-right">
+                    <Button type="default" size="small" @click="modal = false">Cancel</Button>
+                    <Button type="success" size="small" class="ml-2" @click="savingData" :disabled="isSaving"
+                        :loading="isSaving">{{ isSaving ? 'Saving...' : 'Save' }}</Button>
+                </footer>
             </Form>
 
-            <footer class="text-right">
-                <Button type="default" size="small" @click="modal = false">Cancel</Button>
-                <Button type="success" size="small" class="ml-2" @click="savingData" :disabled="isSaving"
-                    :loading="isSaving">{{ isSaving ? 'Saving...' : 'Save' }}</Button>
-            </footer>
+
         </Modal>
 
 
         <!--Editing Modal-->
-        <Modal v-model="editModal" title="Edit Tag" :mask-closable="false" :closable="false" footer-hide>
+        <Modal v-model="editModal" title="Edit Category" :mask-closable="false" :closable="false" footer-hide>
             <Form>
-                <FormItem label="Tag Name">
-                    <Input v-model="formDataEdit.tagName"></Input>
+                <FormItem label="Category Name">
+                    <Input v-model="formDataEdit.categoryName"></Input>
                 </FormItem>
-            </Form>
 
-            <footer class="text-right">
-                <Button type="default" size="small" @click="editModal = false">Cancel</Button>
-                <Button type="success" size="small" class="ml-2" @click="updatingData" :disabled="isSaving"
-                    :loading="isSaving">{{ isSaving ? 'Saving...' : 'Save' }}</Button>
-            </footer>
+                <Upload type="drag" :headers="{ 'x-csrf-token': token, 'X-Requested-With':'XMLHttpRequest'}"
+                    :on-success="handleSuccess" :on-error="handleError" :format="['jpg','jpeg','png']"
+                    :on-format-error="handleFormatError" :max-size="2048" :on-exceeded-size="handleMaxSize"
+                    v-show="isIconImageNew" ref="clearUploadEdit" action="category-img-upload">
+                    <div style="padding: 20px 0">
+                        <Icon type="ios-cloud-upload" size="52" style="color: #3399ff"></Icon>
+                        <p>Click or drag files here to upload</p>
+                    </div>
+                </Upload>
+                <div class="demo-upload-list" v-if="formDataEdit.iconImage">
+                    <img :src="`${formDataEdit.iconImage}`" alt="Image" />
+                    <div class="demo-upload-list-cover">
+                        <Icon type="ios-trash-outline" @click="deleteImage(false)"></Icon>
+                    </div>
+                </div>
+                <div class="image_thumb">
+
+                </div>
+                <footer class="text-right">
+                    <Button type="default" size="small" @click="closeEditModal = false">Cancel</Button>
+                    <Button type="success" size="small" class="ml-2" @click="updatingData" :disabled="isSaving"
+                        :loading="isSaving">{{ isSaving ? 'Saving...' : 'Save' }}</Button>
+                </footer>
+            </Form>
         </Modal>
 
         <!-- Deleting Modal -->
@@ -120,7 +140,8 @@ export default {
                 categoryName: ''
             },
             formDataEdit: {
-                tagName: ''
+                iconImage: '',
+                categoryName: ''
             },
             index: -1,
             deletingModal: false,
@@ -128,6 +149,8 @@ export default {
             isDeleting: false,
             deletingIndex: -1,
             token: '',
+            isIconImageNew: false,
+            isEditingItem: false
         }
     },
 
@@ -142,6 +165,10 @@ export default {
     },
     methods: {
         handleSuccess(res, file) {
+            res = `/uploads/${res}`;
+            if (this.isEditingItem){
+                return this.formDataEdit.iconImage = res;
+            }
             this.formData.iconImage = res;
         },
         handleError(res, file) {
@@ -163,10 +190,19 @@ export default {
             });
         },
 
-        async deleteImage(){
-            let image = this.formData.iconImage;
-            this.formData.iconImage = '';
-            this.$refs.clearUpload.clearFiles();
+        async deleteImage(isAdd = true){
+            let image;
+            if(!isAdd){//for editing...
+                this.isIconImageNew = true;
+                image = this.formDataEdit.iconImage;
+                this.formDataEdit.iconImage = '';
+                this.$refs.clearUploadEdit.clearFiles();
+            }else{
+                image = this.formData.iconImage;
+                this.formData.iconImage = '';
+                this.$refs.clearUpload.clearFiles();
+            }
+            
             const res = await this.callAPI('post', 'delete-image', {imageName:image});
             if(res.status != 200){
                 this.formData.iconImage = image;
@@ -179,7 +215,7 @@ export default {
                 return this.err('Category name is required');
             if (this.formData.iconImage.trim() == '')
                 return this.err('Icon image is required');
-            this.formData.iconImage = `/uploads/${this.formData.iconImage}`;
+            this.formData.iconImage = `${this.formData.iconImage}`;
 
             const res = await this.callAPI('post', 'category-save', this.formData)
             if (res.status === 201) {
@@ -201,10 +237,14 @@ export default {
         },
 
         async updatingData() {
-            if (this.formDataEdit.tagName.trim() == '')
-                return this.err('Tag name is required');
+            if (this.formDataEdit.categoryName.trim() == '')
+                return this.err('Category name is required');
+            if (this.formDataEdit.iconImage.trim() == '')
+                return this.err('Icon image is required');
 
-            const res = await this.callAPI('post', 'tag-edit', this.formDataEdit)
+            this.formDataEdit.iconImage = `${this.formDataEdit.iconImage}`;
+
+            const res = await this.callAPI('post', 'category-update', this.formDataEdit)
 
             if (res.status === 200) {
                 if (res.data.status === 422) {
@@ -213,8 +253,8 @@ export default {
                         this.err(errors[field]);
                     }
                 } else {
-                    this.tags[this.index].tagName = this.formDataEdit.tagName;
-                    this.success("Tag updated successfully!");
+                    this.categories[this.index].categoryName = this.formDataEdit.categoryName;
+                    this.success("Category updated successfully!");
                     this.editModal = false;
                 }
             } else {
@@ -222,14 +262,21 @@ export default {
             }
         },
 
-        showEditModal(tag, index) {
-            let obj = {
-                id: tag.id,
-                tagName: tag.tagName
-            }
-            this.formDataEdit = obj;
+        showEditModal(category, index) {
+            // let obj = {
+            //     id: category.id,
+            //     categoryName: category.categoryName,
+            //     iconImage: category.iconImage
+            // }
+            this.formDataEdit = category;
             this.editModal = true;
             this.index = index;
+            this.isEditingItem = true;
+        },
+
+        closeEditModal(){
+            this.isEditingItem = false;
+            this.editModal = false;
         },
 
         async deleteData() {
@@ -249,6 +296,7 @@ export default {
             this.deletingIndex = i;
             this.deletingModal = true;
         }
+
     }
 }
 </script>

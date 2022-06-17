@@ -19877,14 +19877,17 @@ function _asyncToGenerator(fn) { return function () { var self = this, args = ar
         categoryName: ''
       },
       formDataEdit: {
-        tagName: ''
+        iconImage: '',
+        categoryName: ''
       },
       index: -1,
       deletingModal: false,
       deleteItem: {},
       isDeleting: false,
       deletingIndex: -1,
-      token: ''
+      token: '',
+      isIconImageNew: false,
+      isEditingItem: false
     };
   },
   created: function created() {
@@ -19919,6 +19922,12 @@ function _asyncToGenerator(fn) { return function () { var self = this, args = ar
   },
   methods: {
     handleSuccess: function handleSuccess(res, file) {
+      res = "/uploads/".concat(res);
+
+      if (this.isEditingItem) {
+        return this.formDataEdit.iconImage = res;
+      }
+
       this.formData.iconImage = res;
     },
     handleError: function handleError(res, file) {
@@ -19940,25 +19949,37 @@ function _asyncToGenerator(fn) { return function () { var self = this, args = ar
       });
     },
     deleteImage: function deleteImage() {
-      var _this2 = this;
+      var _arguments = arguments,
+          _this2 = this;
 
       return _asyncToGenerator( /*#__PURE__*/_regeneratorRuntime().mark(function _callee2() {
-        var image, res;
+        var isAdd, image, res;
         return _regeneratorRuntime().wrap(function _callee2$(_context2) {
           while (1) {
             switch (_context2.prev = _context2.next) {
               case 0:
-                image = _this2.formData.iconImage;
-                _this2.formData.iconImage = '';
+                isAdd = _arguments.length > 0 && _arguments[0] !== undefined ? _arguments[0] : true;
 
-                _this2.$refs.clearUpload.clearFiles();
+                if (!isAdd) {
+                  //for editing...
+                  _this2.isIconImageNew = true;
+                  image = _this2.formDataEdit.iconImage;
+                  _this2.formDataEdit.iconImage = '';
 
-                _context2.next = 5;
+                  _this2.$refs.clearUploadEdit.clearFiles();
+                } else {
+                  image = _this2.formData.iconImage;
+                  _this2.formData.iconImage = '';
+
+                  _this2.$refs.clearUpload.clearFiles();
+                }
+
+                _context2.next = 4;
                 return _this2.callAPI('post', 'delete-image', {
                   imageName: image
                 });
 
-              case 5:
+              case 4:
                 res = _context2.sent;
 
                 if (res.status != 200) {
@@ -19967,7 +19988,7 @@ function _asyncToGenerator(fn) { return function () { var self = this, args = ar
                   _this2.err();
                 }
 
-              case 7:
+              case 6:
               case "end":
                 return _context2.stop();
             }
@@ -20001,7 +20022,7 @@ function _asyncToGenerator(fn) { return function () { var self = this, args = ar
                 return _context3.abrupt("return", _this3.err('Icon image is required'));
 
               case 4:
-                _this3.formData.iconImage = "/uploads/".concat(_this3.formData.iconImage);
+                _this3.formData.iconImage = "".concat(_this3.formData.iconImage);
                 _context3.next = 7;
                 return _this3.callAPI('post', 'category-save', _this3.formData);
 
@@ -20048,18 +20069,27 @@ function _asyncToGenerator(fn) { return function () { var self = this, args = ar
           while (1) {
             switch (_context4.prev = _context4.next) {
               case 0:
-                if (!(_this4.formDataEdit.tagName.trim() == '')) {
+                if (!(_this4.formDataEdit.categoryName.trim() == '')) {
                   _context4.next = 2;
                   break;
                 }
 
-                return _context4.abrupt("return", _this4.err('Tag name is required'));
+                return _context4.abrupt("return", _this4.err('Category name is required'));
 
               case 2:
-                _context4.next = 4;
-                return _this4.callAPI('post', 'tag-edit', _this4.formDataEdit);
+                if (!(_this4.formDataEdit.iconImage.trim() == '')) {
+                  _context4.next = 4;
+                  break;
+                }
+
+                return _context4.abrupt("return", _this4.err('Icon image is required'));
 
               case 4:
+                _this4.formDataEdit.iconImage = "".concat(_this4.formDataEdit.iconImage);
+                _context4.next = 7;
+                return _this4.callAPI('post', 'category-update', _this4.formDataEdit);
+
+              case 7:
                 res = _context4.sent;
 
                 if (res.status === 200) {
@@ -20072,9 +20102,9 @@ function _asyncToGenerator(fn) { return function () { var self = this, args = ar
                       _this4.err(errors[field]);
                     }
                   } else {
-                    _this4.tags[_this4.index].tagName = _this4.formDataEdit.tagName;
+                    _this4.categories[_this4.index].categoryName = _this4.formDataEdit.categoryName;
 
-                    _this4.success("Tag updated successfully!");
+                    _this4.success("Category updated successfully!");
 
                     _this4.editModal = false;
                   }
@@ -20082,7 +20112,7 @@ function _asyncToGenerator(fn) { return function () { var self = this, args = ar
                   _this4.err("Oops!", "Something went wrong!");
                 }
 
-              case 6:
+              case 9:
               case "end":
                 return _context4.stop();
             }
@@ -20090,14 +20120,20 @@ function _asyncToGenerator(fn) { return function () { var self = this, args = ar
         }, _callee4);
       }))();
     },
-    showEditModal: function showEditModal(tag, index) {
-      var obj = {
-        id: tag.id,
-        tagName: tag.tagName
-      };
-      this.formDataEdit = obj;
+    showEditModal: function showEditModal(category, index) {
+      // let obj = {
+      //     id: category.id,
+      //     categoryName: category.categoryName,
+      //     iconImage: category.iconImage
+      // }
+      this.formDataEdit = category;
       this.editModal = true;
       this.index = index;
+      this.isEditingItem = true;
+    },
+    closeEditModal: function closeEditModal() {
+      this.isEditingItem = false;
+      this.editModal = false;
     },
     deleteData: function deleteData() {
       var _this5 = this;
@@ -20567,23 +20603,48 @@ var _hoisted_21 = {
 var _hoisted_22 = /*#__PURE__*/(0,vue__WEBPACK_IMPORTED_MODULE_0__.createTextVNode)("Cancel");
 
 var _hoisted_23 = {
+  style: {
+    "padding": "20px 0"
+  }
+};
+
+var _hoisted_24 = /*#__PURE__*/(0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("p", null, "Click or drag files here to upload", -1
+/* HOISTED */
+);
+
+var _hoisted_25 = {
+  key: 0,
+  "class": "demo-upload-list"
+};
+var _hoisted_26 = ["src"];
+var _hoisted_27 = {
+  "class": "demo-upload-list-cover"
+};
+
+var _hoisted_28 = /*#__PURE__*/(0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("div", {
+  "class": "image_thumb"
+}, null, -1
+/* HOISTED */
+);
+
+var _hoisted_29 = {
   "class": "text-right"
 };
 
-var _hoisted_24 = /*#__PURE__*/(0,vue__WEBPACK_IMPORTED_MODULE_0__.createTextVNode)("Cancel");
+var _hoisted_30 = /*#__PURE__*/(0,vue__WEBPACK_IMPORTED_MODULE_0__.createTextVNode)("Cancel");
 
-var _hoisted_25 = {
+var _hoisted_31 = {
   style: {
     "color": "#f60",
     "text-align": "center"
   }
 };
 
-var _hoisted_26 = /*#__PURE__*/(0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("span", null, "Delete confirmation", -1
+var _hoisted_32 = /*#__PURE__*/(0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("span", null, "Delete confirmation", -1
 /* HOISTED */
 );
 
-var _hoisted_27 = /*#__PURE__*/(0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("div", {
+var _hoisted_33 = /*#__PURE__*/(0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("div", {
   style: {
     "text-align": "center"
   }
@@ -20591,7 +20652,7 @@ var _hoisted_27 = /*#__PURE__*/(0,vue__WEBPACK_IMPORTED_MODULE_0__.createElement
 /* HOISTED */
 );
 
-var _hoisted_28 = /*#__PURE__*/(0,vue__WEBPACK_IMPORTED_MODULE_0__.createTextVNode)("Delete");
+var _hoisted_34 = /*#__PURE__*/(0,vue__WEBPACK_IMPORTED_MODULE_0__.createTextVNode)("Delete");
 
 function render(_ctx, _cache, $props, $setup, $data, $options) {
   var _component_Icon = (0,vue__WEBPACK_IMPORTED_MODULE_0__.resolveComponent)("Icon");
@@ -20719,7 +20780,7 @@ function render(_ctx, _cache, $props, $setup, $data, $options) {
           }, 8
           /* PROPS */
           , ["headers", "on-success", "on-error", "on-format-error", "on-exceeded-size"]), $data.formData.iconImage ? ((0,vue__WEBPACK_IMPORTED_MODULE_0__.openBlock)(), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementBlock)("div", _hoisted_17, [(0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("img", {
-            src: "/uploads/".concat($data.formData.iconImage),
+            src: "".concat($data.formData.iconImage),
             alt: "Image"
           }, null, 8
           /* PROPS */
@@ -20728,43 +20789,43 @@ function render(_ctx, _cache, $props, $setup, $data, $options) {
             onClick: $options.deleteImage
           }, null, 8
           /* PROPS */
-          , ["onClick"])])])) : (0,vue__WEBPACK_IMPORTED_MODULE_0__.createCommentVNode)("v-if", true), _hoisted_20];
+          , ["onClick"])])])) : (0,vue__WEBPACK_IMPORTED_MODULE_0__.createCommentVNode)("v-if", true), _hoisted_20, (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("footer", _hoisted_21, [(0,vue__WEBPACK_IMPORTED_MODULE_0__.createVNode)(_component_Button, {
+            type: "default",
+            size: "small",
+            onClick: _cache[2] || (_cache[2] = function ($event) {
+              return $data.modal = false;
+            })
+          }, {
+            "default": (0,vue__WEBPACK_IMPORTED_MODULE_0__.withCtx)(function () {
+              return [_hoisted_22];
+            }),
+            _: 1
+            /* STABLE */
+
+          }), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createVNode)(_component_Button, {
+            type: "success",
+            size: "small",
+            "class": "ml-2",
+            onClick: $options.savingData,
+            disabled: $data.isSaving,
+            loading: $data.isSaving
+          }, {
+            "default": (0,vue__WEBPACK_IMPORTED_MODULE_0__.withCtx)(function () {
+              return [(0,vue__WEBPACK_IMPORTED_MODULE_0__.createTextVNode)((0,vue__WEBPACK_IMPORTED_MODULE_0__.toDisplayString)($data.isSaving ? 'Saving...' : 'Save'), 1
+              /* TEXT */
+              )];
+            }),
+            _: 1
+            /* STABLE */
+
+          }, 8
+          /* PROPS */
+          , ["onClick", "disabled", "loading"])])];
         }),
         _: 1
         /* STABLE */
 
-      }), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("footer", _hoisted_21, [(0,vue__WEBPACK_IMPORTED_MODULE_0__.createVNode)(_component_Button, {
-        type: "default",
-        size: "small",
-        onClick: _cache[2] || (_cache[2] = function ($event) {
-          return $data.modal = false;
-        })
-      }, {
-        "default": (0,vue__WEBPACK_IMPORTED_MODULE_0__.withCtx)(function () {
-          return [_hoisted_22];
-        }),
-        _: 1
-        /* STABLE */
-
-      }), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createVNode)(_component_Button, {
-        type: "success",
-        size: "small",
-        "class": "ml-2",
-        onClick: $options.savingData,
-        disabled: $data.isSaving,
-        loading: $data.isSaving
-      }, {
-        "default": (0,vue__WEBPACK_IMPORTED_MODULE_0__.withCtx)(function () {
-          return [(0,vue__WEBPACK_IMPORTED_MODULE_0__.createTextVNode)((0,vue__WEBPACK_IMPORTED_MODULE_0__.toDisplayString)($data.isSaving ? 'Saving...' : 'Save'), 1
-          /* TEXT */
-          )];
-        }),
-        _: 1
-        /* STABLE */
-
-      }, 8
-      /* PROPS */
-      , ["onClick", "disabled", "loading"])])];
+      })];
     }),
     _: 1
     /* STABLE */
@@ -20773,10 +20834,10 @@ function render(_ctx, _cache, $props, $setup, $data, $options) {
   /* PROPS */
   , ["modelValue"]), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createCommentVNode)("Editing Modal"), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createVNode)(_component_Modal, {
     modelValue: $data.editModal,
-    "onUpdate:modelValue": _cache[6] || (_cache[6] = function ($event) {
+    "onUpdate:modelValue": _cache[7] || (_cache[7] = function ($event) {
       return $data.editModal = $event;
     }),
-    title: "Edit Tag",
+    title: "Edit Category",
     "mask-closable": false,
     closable: false,
     "footer-hide": ""
@@ -20785,13 +20846,13 @@ function render(_ctx, _cache, $props, $setup, $data, $options) {
       return [(0,vue__WEBPACK_IMPORTED_MODULE_0__.createVNode)(_component_Form, null, {
         "default": (0,vue__WEBPACK_IMPORTED_MODULE_0__.withCtx)(function () {
           return [(0,vue__WEBPACK_IMPORTED_MODULE_0__.createVNode)(_component_FormItem, {
-            label: "Tag Name"
+            label: "Category Name"
           }, {
             "default": (0,vue__WEBPACK_IMPORTED_MODULE_0__.withCtx)(function () {
               return [(0,vue__WEBPACK_IMPORTED_MODULE_0__.createVNode)(_component_Input, {
-                modelValue: $data.formDataEdit.tagName,
+                modelValue: $data.formDataEdit.categoryName,
                 "onUpdate:modelValue": _cache[4] || (_cache[4] = function ($event) {
-                  return $data.formDataEdit.tagName = $event;
+                  return $data.formDataEdit.categoryName = $event;
                 })
               }, null, 8
               /* PROPS */
@@ -20800,43 +20861,82 @@ function render(_ctx, _cache, $props, $setup, $data, $options) {
             _: 1
             /* STABLE */
 
-          })];
+          }), (0,vue__WEBPACK_IMPORTED_MODULE_0__.withDirectives)((0,vue__WEBPACK_IMPORTED_MODULE_0__.createVNode)(_component_Upload, {
+            type: "drag",
+            headers: {
+              'x-csrf-token': $data.token,
+              'X-Requested-With': 'XMLHttpRequest'
+            },
+            "on-success": $options.handleSuccess,
+            "on-error": $options.handleError,
+            format: ['jpg', 'jpeg', 'png'],
+            "on-format-error": $options.handleFormatError,
+            "max-size": 2048,
+            "on-exceeded-size": $options.handleMaxSize,
+            ref: "clearUploadEdit",
+            action: "category-img-upload"
+          }, {
+            "default": (0,vue__WEBPACK_IMPORTED_MODULE_0__.withCtx)(function () {
+              return [(0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("div", _hoisted_23, [(0,vue__WEBPACK_IMPORTED_MODULE_0__.createVNode)(_component_Icon, {
+                type: "ios-cloud-upload",
+                size: "52",
+                style: {
+                  "color": "#3399ff"
+                }
+              }), _hoisted_24])];
+            }),
+            _: 1
+            /* STABLE */
+
+          }, 8
+          /* PROPS */
+          , ["headers", "on-success", "on-error", "on-format-error", "on-exceeded-size"]), [[vue__WEBPACK_IMPORTED_MODULE_0__.vShow, $data.isIconImageNew]]), $data.formDataEdit.iconImage ? ((0,vue__WEBPACK_IMPORTED_MODULE_0__.openBlock)(), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementBlock)("div", _hoisted_25, [(0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("img", {
+            src: "".concat($data.formDataEdit.iconImage),
+            alt: "Image"
+          }, null, 8
+          /* PROPS */
+          , _hoisted_26), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("div", _hoisted_27, [(0,vue__WEBPACK_IMPORTED_MODULE_0__.createVNode)(_component_Icon, {
+            type: "ios-trash-outline",
+            onClick: _cache[5] || (_cache[5] = function ($event) {
+              return $options.deleteImage(false);
+            })
+          })])])) : (0,vue__WEBPACK_IMPORTED_MODULE_0__.createCommentVNode)("v-if", true), _hoisted_28, (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("footer", _hoisted_29, [(0,vue__WEBPACK_IMPORTED_MODULE_0__.createVNode)(_component_Button, {
+            type: "default",
+            size: "small",
+            onClick: _cache[6] || (_cache[6] = function ($event) {
+              return $options.closeEditModal = false;
+            })
+          }, {
+            "default": (0,vue__WEBPACK_IMPORTED_MODULE_0__.withCtx)(function () {
+              return [_hoisted_30];
+            }),
+            _: 1
+            /* STABLE */
+
+          }), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createVNode)(_component_Button, {
+            type: "success",
+            size: "small",
+            "class": "ml-2",
+            onClick: $options.updatingData,
+            disabled: $data.isSaving,
+            loading: $data.isSaving
+          }, {
+            "default": (0,vue__WEBPACK_IMPORTED_MODULE_0__.withCtx)(function () {
+              return [(0,vue__WEBPACK_IMPORTED_MODULE_0__.createTextVNode)((0,vue__WEBPACK_IMPORTED_MODULE_0__.toDisplayString)($data.isSaving ? 'Saving...' : 'Save'), 1
+              /* TEXT */
+              )];
+            }),
+            _: 1
+            /* STABLE */
+
+          }, 8
+          /* PROPS */
+          , ["onClick", "disabled", "loading"])])];
         }),
         _: 1
         /* STABLE */
 
-      }), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("footer", _hoisted_23, [(0,vue__WEBPACK_IMPORTED_MODULE_0__.createVNode)(_component_Button, {
-        type: "default",
-        size: "small",
-        onClick: _cache[5] || (_cache[5] = function ($event) {
-          return $data.editModal = false;
-        })
-      }, {
-        "default": (0,vue__WEBPACK_IMPORTED_MODULE_0__.withCtx)(function () {
-          return [_hoisted_24];
-        }),
-        _: 1
-        /* STABLE */
-
-      }), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createVNode)(_component_Button, {
-        type: "success",
-        size: "small",
-        "class": "ml-2",
-        onClick: $options.updatingData,
-        disabled: $data.isSaving,
-        loading: $data.isSaving
-      }, {
-        "default": (0,vue__WEBPACK_IMPORTED_MODULE_0__.withCtx)(function () {
-          return [(0,vue__WEBPACK_IMPORTED_MODULE_0__.createTextVNode)((0,vue__WEBPACK_IMPORTED_MODULE_0__.toDisplayString)($data.isSaving ? 'Saving...' : 'Save'), 1
-          /* TEXT */
-          )];
-        }),
-        _: 1
-        /* STABLE */
-
-      }, 8
-      /* PROPS */
-      , ["onClick", "disabled", "loading"])])];
+      })];
     }),
     _: 1
     /* STABLE */
@@ -20845,15 +20945,15 @@ function render(_ctx, _cache, $props, $setup, $data, $options) {
   /* PROPS */
   , ["modelValue"]), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createCommentVNode)(" Deleting Modal "), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createVNode)(_component_Modal, {
     modelValue: $data.deletingModal,
-    "onUpdate:modelValue": _cache[7] || (_cache[7] = function ($event) {
+    "onUpdate:modelValue": _cache[8] || (_cache[8] = function ($event) {
       return $data.deletingModal = $event;
     }),
     width: "360"
   }, {
     header: (0,vue__WEBPACK_IMPORTED_MODULE_0__.withCtx)(function () {
-      return [(0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("p", _hoisted_25, [(0,vue__WEBPACK_IMPORTED_MODULE_0__.createVNode)(_component_Icon, {
+      return [(0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("p", _hoisted_31, [(0,vue__WEBPACK_IMPORTED_MODULE_0__.createVNode)(_component_Icon, {
         type: "ios-information-circle"
-      }), _hoisted_26])];
+      }), _hoisted_32])];
     }),
     footer: (0,vue__WEBPACK_IMPORTED_MODULE_0__.withCtx)(function () {
       return [(0,vue__WEBPACK_IMPORTED_MODULE_0__.createVNode)(_component_Button, {
@@ -20865,7 +20965,7 @@ function render(_ctx, _cache, $props, $setup, $data, $options) {
         onClick: $options.deleteData
       }, {
         "default": (0,vue__WEBPACK_IMPORTED_MODULE_0__.withCtx)(function () {
-          return [_hoisted_28];
+          return [_hoisted_34];
         }),
         _: 1
         /* STABLE */
@@ -20875,7 +20975,7 @@ function render(_ctx, _cache, $props, $setup, $data, $options) {
       , ["loading", "disabled", "onClick"])];
     }),
     "default": (0,vue__WEBPACK_IMPORTED_MODULE_0__.withCtx)(function () {
-      return [_hoisted_27];
+      return [_hoisted_33];
     }),
     _: 1
     /* STABLE */

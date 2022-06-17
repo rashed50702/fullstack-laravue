@@ -110,9 +110,22 @@ class CategoryController extends Controller
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function update(Request $request, $id)
+    public function update(Request $request)
     {
-        //
+        $validator = Validator::make($request->all(), [
+            'categoryName' => 'required|unique:categories,categoryName,' . $request->id,
+            'iconImage' => 'required',
+        ]);
+
+        if ($validator->fails()) {
+            return Response::json(['errors' => $validator->errors()->all(), 'status' => 422]);
+        }
+        $data = Category::where('id', $request->id)->update([
+            'categoryName' => $request->categoryName,
+            'iconImage' => $request->iconImage,
+        ]);
+
+        return $data;
     }
 
     /**

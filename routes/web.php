@@ -17,6 +17,7 @@ Route::post('delete-tag', [TagController::class, 'deleteTag']);
 Route::post('category-img-upload', [CategoryController::class, 'imgUpload']);
 Route::post('delete-image', [CategoryController::class, 'deleteImage']);
 Route::post('category-save', [CategoryController::class, 'store']);
+Route::post('category-update', [CategoryController::class, 'update']);
 Route::get('categories-list', [CategoryController::class, 'index']);
 
 
