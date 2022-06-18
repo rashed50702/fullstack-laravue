@@ -18,9 +18,9 @@
 
                     <!-- TABLE ITEMS -->
                     <tr v-for="(tag, i) in tags" :key="i" v-if="tags.length">
-                        <td>{{i + 1}}</td>
-                        <td class="_table_name">{{tag.tagName}} - {{tag.id}}</td>
-                        <td>{{tag.created_at}}</td>
+                        <td>{{ i + 1 }}</td>
+                        <td class="_table_name">{{ tag.tagName }} - {{ tag.id }}</td>
+                        <td>{{ tag.created_at }}</td>
                         <td class="text-center">
                             <button class="_btn _action_btn edit_btn1" type="button"
                                 @click="showEditModal(tag, i)">Edit</button>
@@ -43,7 +43,7 @@
             <footer class="text-right">
                 <Button type="default" size="small" @click="modal = false">Cancel</Button>
                 <Button type="success" size="small" class="ml-2" @click="savingData" :disabled="isSaving"
-                    :loading="isSaving">{{isSaving ? 'Saving...' : 'Save'}}</Button>
+                    :loading="isSaving">{{ isSaving ? 'Saving...' : 'Save' }}</Button>
             </footer>
         </Modal>
 
@@ -59,12 +59,12 @@
             <footer class="text-right">
                 <Button type="default" size="small" @click="editModal = false">Cancel</Button>
                 <Button type="success" size="small" class="ml-2" @click="updatingData" :disabled="isSaving"
-                    :loading="isSaving">{{isSaving ? 'Saving...' : 'Save'}}</Button>
+                    :loading="isSaving">{{ isSaving ? 'Saving...' : 'Save' }}</Button>
             </footer>
         </Modal>
 
         <!-- Deleting Modal -->
-        <Modal v-model="deletingModal" width="360">
+        <!-- <Modal v-model="deletingModal" width="360">
             <template #header>
                 <p style="color:#f60;text-align:center">
                     <Icon type="ios-information-circle"></Icon>
@@ -78,13 +78,18 @@
                 <Button type="error" size="large" long :loading="isDeleting" :disabled="isDeleting"
                     @click="deleteData">Delete</Button>
             </template>
-        </Modal>
-
+        </Modal> -->
+        <deleteModal></deleteModal>
+        <!-- <testDeleteModal></testDeleteModal> -->
 
     </div>
 </template>
 
 <script>
+import deleteModal from '../components/deleteModal.vue';
+import testDeleteModal from '../components/testDeleteModal.vue';
+import { mapGetters } from 'vuex';
+
 export default {
     data() {
         return {
@@ -182,9 +187,33 @@ export default {
             this.deletingModal = false;
         },
         showDeletingModal(tag, i) {
-            this.deleteItem = tag;
-            this.deletingIndex = i;
-            this.deletingModal = true;
+            const deleteModalObj = {
+                deletingModal: true,
+                deleteUrl: '/delete-tag',
+                data: tag,
+                deletingIndex: i,
+                isDeleted: false
+            }
+            this.$store.commit('setDeletingModalObj', deleteModalObj);
+            console.log("delete modal called");
+            // this.deleteItem = tag;
+            // this.deletingIndex = i;
+            // this.deletingModal = true;
+        }
+    },
+    components:{
+        deleteModal, testDeleteModal
+    },
+    computed: {
+        ...mapGetters(['getDeleteModalObj'])
+    },
+    watch:{
+        getDeleteModalObj(obj){
+            console.log(obj);
+            if (obj.isDeleted){
+                console.log("inside if");
+                this.tags.splice(obj.deletingIndex, 1);
+            }
         }
     }
 }
