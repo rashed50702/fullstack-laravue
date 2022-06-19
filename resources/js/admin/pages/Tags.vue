@@ -38,13 +38,13 @@
                 <FormItem label="Tag Name">
                     <Input v-model="formData.tagName"></Input>
                 </FormItem>
-            </Form>
 
-            <footer class="text-right">
-                <Button type="default" size="small" @click="modal = false">Cancel</Button>
-                <Button type="success" size="small" class="ml-2" @click="savingData" :disabled="isSaving"
-                    :loading="isSaving">{{ isSaving ? 'Saving...' : 'Save' }}</Button>
-            </footer>
+                <footer class="text-right">
+                    <Button type="default" size="small" @click="modal = false">Cancel</Button>
+                    <Button type="success" size="small" class="ml-2" @click="savingData" :disabled="isSaving"
+                        :loading="isSaving">{{ isSaving ? 'Saving...' : 'Save' }}</Button>
+                </footer>
+            </Form>
         </Modal>
 
 
@@ -54,13 +54,12 @@
                 <FormItem label="Tag Name">
                     <Input v-model="formDataEdit.tagName"></Input>
                 </FormItem>
+                <footer class="text-right">
+                    <Button type="default" size="small" @click="editModal = false">Cancel</Button>
+                    <Button type="success" size="small" class="ml-2" @click="updatingData" :disabled="isSaving"
+                        :loading="isSaving">{{ isSaving ? 'Saving...' : 'Save' }}</Button>
+                </footer>
             </Form>
-
-            <footer class="text-right">
-                <Button type="default" size="small" @click="editModal = false">Cancel</Button>
-                <Button type="success" size="small" class="ml-2" @click="updatingData" :disabled="isSaving"
-                    :loading="isSaving">{{ isSaving ? 'Saving...' : 'Save' }}</Button>
-            </footer>
         </Modal>
 
         <!-- Deleting Modal -->

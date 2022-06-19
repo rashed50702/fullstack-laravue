@@ -19968,7 +19968,9 @@ function _asyncToGenerator(fn) { return function () { var self = this, args = ar
         userType: ''
       },
       formDataEdit: {
-        tagName: ''
+        fullName: '',
+        email: '',
+        userType: ''
       },
       index: -1,
       deletingModal: false,
@@ -20093,18 +20095,34 @@ function _asyncToGenerator(fn) { return function () { var self = this, args = ar
           while (1) {
             switch (_context3.prev = _context3.next) {
               case 0:
-                if (!(_this3.formDataEdit.tagName.trim() == '')) {
+                if (!(_this3.formDataEdit.fullName.trim() == '')) {
                   _context3.next = 2;
                   break;
                 }
 
-                return _context3.abrupt("return", _this3.err('Tag name is required'));
+                return _context3.abrupt("return", _this3.err('Full name is required'));
 
               case 2:
-                _context3.next = 4;
-                return _this3.callAPI('post', 'tag-edit', _this3.formDataEdit);
+                if (!(_this3.formDataEdit.email.trim() == '')) {
+                  _context3.next = 4;
+                  break;
+                }
+
+                return _context3.abrupt("return", _this3.err('Email is required'));
 
               case 4:
+                if (!(_this3.formDataEdit.userType.trim() == '')) {
+                  _context3.next = 6;
+                  break;
+                }
+
+                return _context3.abrupt("return", _this3.err('User type is required'));
+
+              case 6:
+                _context3.next = 8;
+                return _this3.callAPI('post', 'update-admin-user', _this3.formDataEdit);
+
+              case 8:
                 res = _context3.sent;
 
                 if (res.status === 200) {
@@ -20117,9 +20135,9 @@ function _asyncToGenerator(fn) { return function () { var self = this, args = ar
                       _this3.err(errors[field]);
                     }
                   } else {
-                    _this3.tags[_this3.index].tagName = _this3.formDataEdit.tagName;
+                    _this3.users[_this3.index] = _this3.formDataEdit;
 
-                    _this3.success("Tag updated successfully!");
+                    _this3.success("Data updated successfully!");
 
                     _this3.editModal = false;
                   }
@@ -20127,7 +20145,7 @@ function _asyncToGenerator(fn) { return function () { var self = this, args = ar
                   _this3.err("Oops!", "Something went wrong!");
                 }
 
-              case 6:
+              case 10:
               case "end":
                 return _context3.stop();
             }
@@ -20135,10 +20153,12 @@ function _asyncToGenerator(fn) { return function () { var self = this, args = ar
         }, _callee3);
       }))();
     },
-    showEditModal: function showEditModal(tag, index) {
+    showEditModal: function showEditModal(user, index) {
       var obj = {
-        id: tag.id,
-        tagName: tag.tagName
+        id: user.id,
+        fullName: user.fullName,
+        email: user.email,
+        userType: user.userType
       };
       this.formDataEdit = obj;
       this.editModal = true;
@@ -21006,11 +21026,17 @@ var _hoisted_16 = {
 
 var _hoisted_17 = /*#__PURE__*/(0,vue__WEBPACK_IMPORTED_MODULE_0__.createTextVNode)("Cancel");
 
-var _hoisted_18 = {
+var _hoisted_18 = /*#__PURE__*/(0,vue__WEBPACK_IMPORTED_MODULE_0__.createTextVNode)("Admin");
+
+var _hoisted_19 = /*#__PURE__*/(0,vue__WEBPACK_IMPORTED_MODULE_0__.createTextVNode)("Editor");
+
+var _hoisted_20 = /*#__PURE__*/(0,vue__WEBPACK_IMPORTED_MODULE_0__.createTextVNode)("Publisher");
+
+var _hoisted_21 = {
   "class": "text-right"
 };
 
-var _hoisted_19 = /*#__PURE__*/(0,vue__WEBPACK_IMPORTED_MODULE_0__.createTextVNode)("Cancel");
+var _hoisted_22 = /*#__PURE__*/(0,vue__WEBPACK_IMPORTED_MODULE_0__.createTextVNode)("Cancel");
 
 function render(_ctx, _cache, $props, $setup, $data, $options) {
   var _component_Icon = (0,vue__WEBPACK_IMPORTED_MODULE_0__.resolveComponent)("Icon");
@@ -21094,9 +21120,7 @@ function render(_ctx, _cache, $props, $setup, $data, $options) {
     "default": (0,vue__WEBPACK_IMPORTED_MODULE_0__.withCtx)(function () {
       return [(0,vue__WEBPACK_IMPORTED_MODULE_0__.createVNode)(_component_Form, null, {
         "default": (0,vue__WEBPACK_IMPORTED_MODULE_0__.withCtx)(function () {
-          return [(0,vue__WEBPACK_IMPORTED_MODULE_0__.createVNode)(_component_FormItem, {
-            label: "Full Name"
-          }, {
+          return [(0,vue__WEBPACK_IMPORTED_MODULE_0__.createVNode)(_component_FormItem, null, {
             "default": (0,vue__WEBPACK_IMPORTED_MODULE_0__.withCtx)(function () {
               return [(0,vue__WEBPACK_IMPORTED_MODULE_0__.createVNode)(_component_Input, {
                 type: "text",
@@ -21104,7 +21128,7 @@ function render(_ctx, _cache, $props, $setup, $data, $options) {
                 "onUpdate:modelValue": _cache[1] || (_cache[1] = function ($event) {
                   return $data.formData.fullName = $event;
                 }),
-                placeholder: "Enter your name"
+                placeholder: "Enter full name"
               }, null, 8
               /* PROPS */
               , ["modelValue"])];
@@ -21112,9 +21136,7 @@ function render(_ctx, _cache, $props, $setup, $data, $options) {
             _: 1
             /* STABLE */
 
-          }), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createVNode)(_component_FormItem, {
-            label: "E-mail"
-          }, {
+          }), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createVNode)(_component_FormItem, null, {
             "default": (0,vue__WEBPACK_IMPORTED_MODULE_0__.withCtx)(function () {
               return [(0,vue__WEBPACK_IMPORTED_MODULE_0__.createVNode)(_component_Input, {
                 type: "email",
@@ -21122,7 +21144,7 @@ function render(_ctx, _cache, $props, $setup, $data, $options) {
                 "onUpdate:modelValue": _cache[2] || (_cache[2] = function ($event) {
                   return $data.formData.email = $event;
                 }),
-                placeholder: "Enter your e-mail"
+                placeholder: "Enter e-mail"
               }, null, 8
               /* PROPS */
               , ["modelValue"])];
@@ -21130,9 +21152,7 @@ function render(_ctx, _cache, $props, $setup, $data, $options) {
             _: 1
             /* STABLE */
 
-          }), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createVNode)(_component_FormItem, {
-            label: "Password"
-          }, {
+          }), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createVNode)(_component_FormItem, null, {
             "default": (0,vue__WEBPACK_IMPORTED_MODULE_0__.withCtx)(function () {
               return [(0,vue__WEBPACK_IMPORTED_MODULE_0__.createVNode)(_component_Input, {
                 type: "password",
@@ -21140,7 +21160,7 @@ function render(_ctx, _cache, $props, $setup, $data, $options) {
                 "onUpdate:modelValue": _cache[3] || (_cache[3] = function ($event) {
                   return $data.formData.password = $event;
                 }),
-                placeholder: "Enter your e-mail"
+                placeholder: "Enter password"
               }, null, 8
               /* PROPS */
               , ["modelValue"])];
@@ -21148,9 +21168,7 @@ function render(_ctx, _cache, $props, $setup, $data, $options) {
             _: 1
             /* STABLE */
 
-          }), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createVNode)(_component_FormItem, {
-            label: "User Type"
-          }, {
+          }), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createVNode)(_component_FormItem, null, {
             "default": (0,vue__WEBPACK_IMPORTED_MODULE_0__.withCtx)(function () {
               return [(0,vue__WEBPACK_IMPORTED_MODULE_0__.createVNode)(_component_Select, {
                 placeholder: "Select User Type",
@@ -21244,10 +21262,10 @@ function render(_ctx, _cache, $props, $setup, $data, $options) {
   /* PROPS */
   , ["modelValue"]), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createCommentVNode)("Editing Modal"), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createVNode)(_component_Modal, {
     modelValue: $data.editModal,
-    "onUpdate:modelValue": _cache[9] || (_cache[9] = function ($event) {
+    "onUpdate:modelValue": _cache[12] || (_cache[12] = function ($event) {
       return $data.editModal = $event;
     }),
-    title: "Edit Tag",
+    title: "Edit Admin User",
     "mask-closable": false,
     closable: false,
     "footer-hide": ""
@@ -21255,15 +21273,15 @@ function render(_ctx, _cache, $props, $setup, $data, $options) {
     "default": (0,vue__WEBPACK_IMPORTED_MODULE_0__.withCtx)(function () {
       return [(0,vue__WEBPACK_IMPORTED_MODULE_0__.createVNode)(_component_Form, null, {
         "default": (0,vue__WEBPACK_IMPORTED_MODULE_0__.withCtx)(function () {
-          return [(0,vue__WEBPACK_IMPORTED_MODULE_0__.createVNode)(_component_FormItem, {
-            label: "Tag Name"
-          }, {
+          return [(0,vue__WEBPACK_IMPORTED_MODULE_0__.createVNode)(_component_FormItem, null, {
             "default": (0,vue__WEBPACK_IMPORTED_MODULE_0__.withCtx)(function () {
               return [(0,vue__WEBPACK_IMPORTED_MODULE_0__.createVNode)(_component_Input, {
-                modelValue: $data.formDataEdit.tagName,
+                type: "text",
+                modelValue: $data.formDataEdit.fullName,
                 "onUpdate:modelValue": _cache[7] || (_cache[7] = function ($event) {
-                  return $data.formDataEdit.tagName = $event;
-                })
+                  return $data.formDataEdit.fullName = $event;
+                }),
+                placeholder: "Enter full name"
               }, null, 8
               /* PROPS */
               , ["modelValue"])];
@@ -21271,43 +21289,124 @@ function render(_ctx, _cache, $props, $setup, $data, $options) {
             _: 1
             /* STABLE */
 
-          })];
+          }), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createVNode)(_component_FormItem, null, {
+            "default": (0,vue__WEBPACK_IMPORTED_MODULE_0__.withCtx)(function () {
+              return [(0,vue__WEBPACK_IMPORTED_MODULE_0__.createVNode)(_component_Input, {
+                type: "email",
+                modelValue: $data.formDataEdit.email,
+                "onUpdate:modelValue": _cache[8] || (_cache[8] = function ($event) {
+                  return $data.formDataEdit.email = $event;
+                }),
+                placeholder: "Enter e-mail"
+              }, null, 8
+              /* PROPS */
+              , ["modelValue"])];
+            }),
+            _: 1
+            /* STABLE */
+
+          }), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createVNode)(_component_FormItem, null, {
+            "default": (0,vue__WEBPACK_IMPORTED_MODULE_0__.withCtx)(function () {
+              return [(0,vue__WEBPACK_IMPORTED_MODULE_0__.createVNode)(_component_Input, {
+                type: "password",
+                modelValue: $data.formDataEdit.password,
+                "onUpdate:modelValue": _cache[9] || (_cache[9] = function ($event) {
+                  return $data.formDataEdit.password = $event;
+                }),
+                placeholder: "Enter password"
+              }, null, 8
+              /* PROPS */
+              , ["modelValue"])];
+            }),
+            _: 1
+            /* STABLE */
+
+          }), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createVNode)(_component_FormItem, null, {
+            "default": (0,vue__WEBPACK_IMPORTED_MODULE_0__.withCtx)(function () {
+              return [(0,vue__WEBPACK_IMPORTED_MODULE_0__.createVNode)(_component_Select, {
+                placeholder: "Select User Type",
+                modelValue: $data.formDataEdit.userType,
+                "onUpdate:modelValue": _cache[10] || (_cache[10] = function ($event) {
+                  return $data.formDataEdit.userType = $event;
+                })
+              }, {
+                "default": (0,vue__WEBPACK_IMPORTED_MODULE_0__.withCtx)(function () {
+                  return [(0,vue__WEBPACK_IMPORTED_MODULE_0__.createVNode)(_component_Option, {
+                    value: "Admin"
+                  }, {
+                    "default": (0,vue__WEBPACK_IMPORTED_MODULE_0__.withCtx)(function () {
+                      return [_hoisted_18];
+                    }),
+                    _: 1
+                    /* STABLE */
+
+                  }), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createVNode)(_component_Option, {
+                    value: "Editor"
+                  }, {
+                    "default": (0,vue__WEBPACK_IMPORTED_MODULE_0__.withCtx)(function () {
+                      return [_hoisted_19];
+                    }),
+                    _: 1
+                    /* STABLE */
+
+                  }), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createVNode)(_component_Option, {
+                    value: "Publisher"
+                  }, {
+                    "default": (0,vue__WEBPACK_IMPORTED_MODULE_0__.withCtx)(function () {
+                      return [_hoisted_20];
+                    }),
+                    _: 1
+                    /* STABLE */
+
+                  })];
+                }),
+                _: 1
+                /* STABLE */
+
+              }, 8
+              /* PROPS */
+              , ["modelValue"])];
+            }),
+            _: 1
+            /* STABLE */
+
+          }), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("footer", _hoisted_21, [(0,vue__WEBPACK_IMPORTED_MODULE_0__.createVNode)(_component_Button, {
+            type: "default",
+            size: "small",
+            onClick: _cache[11] || (_cache[11] = function ($event) {
+              return $data.editModal = false;
+            })
+          }, {
+            "default": (0,vue__WEBPACK_IMPORTED_MODULE_0__.withCtx)(function () {
+              return [_hoisted_22];
+            }),
+            _: 1
+            /* STABLE */
+
+          }), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createVNode)(_component_Button, {
+            type: "success",
+            size: "small",
+            "class": "ml-2",
+            onClick: $options.updatingData,
+            disabled: $data.isSaving,
+            loading: $data.isSaving
+          }, {
+            "default": (0,vue__WEBPACK_IMPORTED_MODULE_0__.withCtx)(function () {
+              return [(0,vue__WEBPACK_IMPORTED_MODULE_0__.createTextVNode)((0,vue__WEBPACK_IMPORTED_MODULE_0__.toDisplayString)($data.isSaving ? 'Saving...' : 'Save'), 1
+              /* TEXT */
+              )];
+            }),
+            _: 1
+            /* STABLE */
+
+          }, 8
+          /* PROPS */
+          , ["onClick", "disabled", "loading"])])];
         }),
         _: 1
         /* STABLE */
 
-      }), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("footer", _hoisted_18, [(0,vue__WEBPACK_IMPORTED_MODULE_0__.createVNode)(_component_Button, {
-        type: "default",
-        size: "small",
-        onClick: _cache[8] || (_cache[8] = function ($event) {
-          return $data.editModal = false;
-        })
-      }, {
-        "default": (0,vue__WEBPACK_IMPORTED_MODULE_0__.withCtx)(function () {
-          return [_hoisted_19];
-        }),
-        _: 1
-        /* STABLE */
-
-      }), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createVNode)(_component_Button, {
-        type: "success",
-        size: "small",
-        "class": "ml-2",
-        onClick: $options.updatingData,
-        disabled: $data.isSaving,
-        loading: $data.isSaving
-      }, {
-        "default": (0,vue__WEBPACK_IMPORTED_MODULE_0__.withCtx)(function () {
-          return [(0,vue__WEBPACK_IMPORTED_MODULE_0__.createTextVNode)((0,vue__WEBPACK_IMPORTED_MODULE_0__.toDisplayString)($data.isSaving ? 'Saving...' : 'Save'), 1
-          /* TEXT */
-          )];
-        }),
-        _: 1
-        /* STABLE */
-
-      }, 8
-      /* PROPS */
-      , ["onClick", "disabled", "loading"])])];
+      })];
     }),
     _: 1
     /* STABLE */
@@ -21879,43 +21978,43 @@ function render(_ctx, _cache, $props, $setup, $data, $options) {
             _: 1
             /* STABLE */
 
-          })];
+          }), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("footer", _hoisted_13, [(0,vue__WEBPACK_IMPORTED_MODULE_0__.createVNode)(_component_Button, {
+            type: "default",
+            size: "small",
+            onClick: _cache[2] || (_cache[2] = function ($event) {
+              return $data.modal = false;
+            })
+          }, {
+            "default": (0,vue__WEBPACK_IMPORTED_MODULE_0__.withCtx)(function () {
+              return [_hoisted_14];
+            }),
+            _: 1
+            /* STABLE */
+
+          }), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createVNode)(_component_Button, {
+            type: "success",
+            size: "small",
+            "class": "ml-2",
+            onClick: $options.savingData,
+            disabled: $data.isSaving,
+            loading: $data.isSaving
+          }, {
+            "default": (0,vue__WEBPACK_IMPORTED_MODULE_0__.withCtx)(function () {
+              return [(0,vue__WEBPACK_IMPORTED_MODULE_0__.createTextVNode)((0,vue__WEBPACK_IMPORTED_MODULE_0__.toDisplayString)($data.isSaving ? 'Saving...' : 'Save'), 1
+              /* TEXT */
+              )];
+            }),
+            _: 1
+            /* STABLE */
+
+          }, 8
+          /* PROPS */
+          , ["onClick", "disabled", "loading"])])];
         }),
         _: 1
         /* STABLE */
 
-      }), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("footer", _hoisted_13, [(0,vue__WEBPACK_IMPORTED_MODULE_0__.createVNode)(_component_Button, {
-        type: "default",
-        size: "small",
-        onClick: _cache[2] || (_cache[2] = function ($event) {
-          return $data.modal = false;
-        })
-      }, {
-        "default": (0,vue__WEBPACK_IMPORTED_MODULE_0__.withCtx)(function () {
-          return [_hoisted_14];
-        }),
-        _: 1
-        /* STABLE */
-
-      }), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createVNode)(_component_Button, {
-        type: "success",
-        size: "small",
-        "class": "ml-2",
-        onClick: $options.savingData,
-        disabled: $data.isSaving,
-        loading: $data.isSaving
-      }, {
-        "default": (0,vue__WEBPACK_IMPORTED_MODULE_0__.withCtx)(function () {
-          return [(0,vue__WEBPACK_IMPORTED_MODULE_0__.createTextVNode)((0,vue__WEBPACK_IMPORTED_MODULE_0__.toDisplayString)($data.isSaving ? 'Saving...' : 'Save'), 1
-          /* TEXT */
-          )];
-        }),
-        _: 1
-        /* STABLE */
-
-      }, 8
-      /* PROPS */
-      , ["onClick", "disabled", "loading"])])];
+      })];
     }),
     _: 1
     /* STABLE */
@@ -21951,43 +22050,43 @@ function render(_ctx, _cache, $props, $setup, $data, $options) {
             _: 1
             /* STABLE */
 
-          })];
+          }), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("footer", _hoisted_15, [(0,vue__WEBPACK_IMPORTED_MODULE_0__.createVNode)(_component_Button, {
+            type: "default",
+            size: "small",
+            onClick: _cache[5] || (_cache[5] = function ($event) {
+              return $data.editModal = false;
+            })
+          }, {
+            "default": (0,vue__WEBPACK_IMPORTED_MODULE_0__.withCtx)(function () {
+              return [_hoisted_16];
+            }),
+            _: 1
+            /* STABLE */
+
+          }), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createVNode)(_component_Button, {
+            type: "success",
+            size: "small",
+            "class": "ml-2",
+            onClick: $options.updatingData,
+            disabled: $data.isSaving,
+            loading: $data.isSaving
+          }, {
+            "default": (0,vue__WEBPACK_IMPORTED_MODULE_0__.withCtx)(function () {
+              return [(0,vue__WEBPACK_IMPORTED_MODULE_0__.createTextVNode)((0,vue__WEBPACK_IMPORTED_MODULE_0__.toDisplayString)($data.isSaving ? 'Saving...' : 'Save'), 1
+              /* TEXT */
+              )];
+            }),
+            _: 1
+            /* STABLE */
+
+          }, 8
+          /* PROPS */
+          , ["onClick", "disabled", "loading"])])];
         }),
         _: 1
         /* STABLE */
 
-      }), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("footer", _hoisted_15, [(0,vue__WEBPACK_IMPORTED_MODULE_0__.createVNode)(_component_Button, {
-        type: "default",
-        size: "small",
-        onClick: _cache[5] || (_cache[5] = function ($event) {
-          return $data.editModal = false;
-        })
-      }, {
-        "default": (0,vue__WEBPACK_IMPORTED_MODULE_0__.withCtx)(function () {
-          return [_hoisted_16];
-        }),
-        _: 1
-        /* STABLE */
-
-      }), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createVNode)(_component_Button, {
-        type: "success",
-        size: "small",
-        "class": "ml-2",
-        onClick: $options.updatingData,
-        disabled: $data.isSaving,
-        loading: $data.isSaving
-      }, {
-        "default": (0,vue__WEBPACK_IMPORTED_MODULE_0__.withCtx)(function () {
-          return [(0,vue__WEBPACK_IMPORTED_MODULE_0__.createTextVNode)((0,vue__WEBPACK_IMPORTED_MODULE_0__.toDisplayString)($data.isSaving ? 'Saving...' : 'Save'), 1
-          /* TEXT */
-          )];
-        }),
-        _: 1
-        /* STABLE */
-
-      }, 8
-      /* PROPS */
-      , ["onClick", "disabled", "loading"])])];
+      })];
     }),
     _: 1
     /* STABLE */

@@ -97,9 +97,33 @@ class AdminUserController extends Controller
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function update(Request $request, $id)
+    public function update(Request $request)
     {
-        //
+        $validator = Validator::make($request->all(), [
+            'fullName' => 'required',
+            'email' => 'bail|required|unique:users,email,' . $request->id,
+            'password' => 'nullable|min:6',
+            'userType' => 'required',
+        ]);
+
+        if ($validator->fails()) {
+            return Response::json(['errors' => $validator->errors()->all(), 'status' => 422]);
+        }
+
+        $data = [
+            'fullName' => $request->fullName,
+            'email' => $request->email,
+            'userType' => $request->userType,
+        ];
+
+        if($request->password){
+            $password = Hash::make($request->password);
+            $data['password'] = $password;
+        }
+
+        $data = User::where('id', $request->id)->update($data);
+
+        return $data;
     }
 
     /**

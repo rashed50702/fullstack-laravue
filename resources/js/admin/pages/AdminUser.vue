@@ -39,16 +39,16 @@
         <!--Adding Modal-->
         <Modal v-model="modal" title="Add Admin USer" :mask-closable="false" :closable="false" footer-hide>
             <Form>
-                <FormItem label="Full Name">
-                    <Input type="text" v-model="formData.fullName" placeholder="Enter your name"></Input>
+                <FormItem>
+                    <Input type="text" v-model="formData.fullName" placeholder="Enter full name"></Input>
                 </FormItem>
-                <FormItem label="E-mail">
-                    <Input type="email" v-model="formData.email" placeholder="Enter your e-mail"></Input>
+                <FormItem>
+                    <Input type="email" v-model="formData.email" placeholder="Enter e-mail"></Input>
                 </FormItem>
-                <FormItem label="Password">
-                    <Input type="password" v-model="formData.password" placeholder="Enter your e-mail"></Input>
+                <FormItem>
+                    <Input type="password" v-model="formData.password" placeholder="Enter password"></Input>
                 </FormItem>
-                <FormItem label="User Type">
+                <FormItem>
                     <Select placeholder="Select User Type" v-model="formData.userType">
                         <Option value="Admin">Admin</Option>
                         <Option value="Editor">Editor</Option>
@@ -65,18 +65,30 @@
 
 
         <!--Editing Modal-->
-        <Modal v-model="editModal" title="Edit Tag" :mask-closable="false" :closable="false" footer-hide>
+        <Modal v-model="editModal" title="Edit Admin User" :mask-closable="false" :closable="false" footer-hide>
             <Form>
-                <FormItem label="Tag Name">
-                    <Input v-model="formDataEdit.tagName"></Input>
+                <FormItem>
+                    <Input type="text" v-model="formDataEdit.fullName" placeholder="Enter full name"></Input>
                 </FormItem>
+                <FormItem>
+                    <Input type="email" v-model="formDataEdit.email" placeholder="Enter e-mail"></Input>
+                </FormItem>
+                <FormItem>
+                    <Input type="password" v-model="formDataEdit.password" placeholder="Enter password"></Input>
+                </FormItem>
+                <FormItem>
+                    <Select placeholder="Select User Type" v-model="formDataEdit.userType">
+                        <Option value="Admin">Admin</Option>
+                        <Option value="Editor">Editor</Option>
+                        <Option value="Publisher">Publisher</Option>
+                    </Select>
+                </FormItem>
+                <footer class="text-right">
+                    <Button type="default" size="small" @click="editModal = false">Cancel</Button>
+                    <Button type="success" size="small" class="ml-2" @click="updatingData" :disabled="isSaving"
+                        :loading="isSaving">{{ isSaving ? 'Saving...' : 'Save' }}</Button>
+                </footer>
             </Form>
-
-            <footer class="text-right">
-                <Button type="default" size="small" @click="editModal = false">Cancel</Button>
-                <Button type="success" size="small" class="ml-2" @click="updatingData" :disabled="isSaving"
-                    :loading="isSaving">{{ isSaving ? 'Saving...' : 'Save' }}</Button>
-            </footer>
         </Modal>
 
         <!-- Deleting Modal -->
@@ -103,7 +115,9 @@ export default {
                 userType: '',
             },
             formDataEdit: {
-                tagName: ''
+                fullName: '',
+                email: '',
+                userType: '',
             },
             index: -1,
             deletingModal: false,
@@ -150,10 +164,14 @@ export default {
         },
 
         async updatingData() {
-            if (this.formDataEdit.tagName.trim() == '')
-                return this.err('Tag name is required');
+            if (this.formDataEdit.fullName.trim() == '')
+                return this.err('Full name is required');
+            if (this.formDataEdit.email.trim() == '')
+                return this.err('Email is required');
+            if (this.formDataEdit.userType.trim() == '')
+                return this.err('User type is required');
 
-            const res = await this.callAPI('post', 'tag-edit', this.formDataEdit)
+            const res = await this.callAPI('post', 'update-admin-user', this.formDataEdit)
 
             if (res.status === 200) {
                 if (res.data.status === 422) {
@@ -162,8 +180,8 @@ export default {
                         this.err(errors[field]);
                     }
                 } else {
-                    this.tags[this.index].tagName = this.formDataEdit.tagName;
-                    this.success("Tag updated successfully!");
+                    this.users[this.index] = this.formDataEdit;
+                    this.success("Data updated successfully!");
                     this.editModal = false;
                 }
             } else {
@@ -171,10 +189,12 @@ export default {
             }
         },
 
-        showEditModal(tag, index) {
+        showEditModal(user, index) {
             let obj = {
-                id: tag.id,
-                tagName: tag.tagName
+                id: user.id,
+                fullName: user.fullName,
+                email: user.email,
+                userType: user.userType,
             }
             this.formDataEdit = obj;
             this.editModal = true;

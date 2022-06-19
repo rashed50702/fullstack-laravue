@@ -24,6 +24,7 @@ Route::post('delete-category', [CategoryController::class, 'destroy']);
 
 Route::get('admin-user-list', [AdminUserController::class, 'index']);
 Route::post('save-admin-user', [AdminUserController::class, 'store']);
+Route::post('update-admin-user', [AdminUserController::class, 'update']);
 
 
 Route::get('{slug}', function () {
