@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\AdminUserController;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\TagController;
 use App\Http\Controllers\CategoryController;
@@ -20,6 +21,9 @@ Route::post('category-save', [CategoryController::class, 'store']);
 Route::post('category-update', [CategoryController::class, 'update']);
 Route::get('categories-list', [CategoryController::class, 'index']);
 Route::post('delete-category', [CategoryController::class, 'destroy']);
+
+Route::get('admin-user-list', [AdminUserController::class, 'index']);
+Route::post('save-admin-user', [AdminUserController::class, 'store']);
 
 
 Route::get('{slug}', function () {
