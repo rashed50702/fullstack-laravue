@@ -37,7 +37,8 @@
         </div>
 
         <!--Adding Modal-->
-        <Modal v-model="modal" title="Add Category" :mask-closable="false" :closable="false" footer-hide>
+        <Modal v-model="modal" title="Add Category" :mask-closable="false" :closable="false"
+            footer-hide>
             <Form>
                 <FormItem label="Category Name">
                     <Input v-model="formData.categoryName"></Input>
@@ -99,7 +100,7 @@
 
                 </div>
                 <footer class="text-right">
-                    <Button type="default" size="small" @click="closeEditModal = false">Cancel</Button>
+                    <Button type="default" size="small" @click="closeEditModal">Cancel</Button>
                     <Button type="success" size="small" class="ml-2" @click="updatingData" :disabled="isSaving"
                         :loading="isSaving">{{ isSaving ? 'Saving...' : 'Save' }}</Button>
                 </footer>
@@ -107,27 +108,15 @@
         </Modal>
 
         <!-- Deleting Modal -->
-        <Modal v-model="deletingModal" width="360">
-            <template #header>
-                <p style="color:#f60;text-align:center">
-                    <Icon type="ios-information-circle"></Icon>
-                    <span>Delete confirmation</span>
-                </p>
-            </template>
-            <div style="text-align:center">
-                <p>Are you sure you want to delete?.</p>
-            </div>
-            <template #footer>
-                <Button type="error" size="large" long :loading="isDeleting" :disabled="isDeleting"
-                    @click="deleteData">Delete</Button>
-            </template>
-        </Modal>
-
+        <deleteModal></deleteModal>
 
     </div>
 </template>
 
 <script>
+import deleteModal from '../components/deleteModal.vue';
+import { mapGetters } from 'vuex';
+
 export default {
     data() {
         return {
@@ -208,6 +197,7 @@ export default {
                 this.formData.iconImage = image;
                 this.err();
             }
+            console.log(res);
         },
 
         async savingData() {
@@ -224,6 +214,7 @@ export default {
                 this.modal = false;
                 this.formData.categoryName = '';
                 this.formData.iconImage = '';
+                this.$refs.clearUpload.clearFiles();
             } else {
                 if (res.status === 422) {
                     let errors = res.data.errors;
@@ -277,27 +268,33 @@ export default {
         closeEditModal(){
             this.isEditingItem = false;
             this.editModal = false;
+
         },
 
-        async deleteData() {
-            this.isDeleting = true;
-            const res = await this.callAPI('post', 'delete-tag', this.deleteItem);
-            if (res.status === 200) {
-                this.categories.splice(this.deletingIndex, 1);
-                this.success("Category has been deleted successfully!");
-                console.log(this.deletingIndex);
-            } else {
-                this.err("Something went wrong");
+        showDeletingModal(category, i) {
+            const deleteModalObj = {
+                deletingModal: true,
+                deleteUrl: '/delete-category',
+                data: category,
+                deletingIndex: i,
+                isDeleted: false
             }
-            this.isDeleting = false;
-            this.deletingModal = false;
-        },
-        showDeletingModal(tag, i) {
-            this.deleteItem = tag;
-            this.deletingIndex = i;
-            this.deletingModal = true;
+            this.$store.commit('setDeletingModalObj', deleteModalObj);
         }
+    },
 
+    components: {
+        deleteModal
+    },
+    computed: {
+        ...mapGetters(['getDeleteModalObj'])
+    },
+    watch: {
+        getDeleteModalObj(obj) {
+            if (obj.isDeleted) {
+                this.categories.splice(obj.deletingIndex, 1);
+            }
+        }
     }
 }
 </script>

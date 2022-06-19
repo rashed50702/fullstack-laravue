@@ -13,7 +13,9 @@
                 <p>Are you sure you want to delete?.</p>
             </div>
             <template #footer>
-                <Button type="error" size="large" long :loading="isDeleting" :disabled="isDeleting"
+                <Button type="default" size="small" :loading="isDeleting" :disabled="isDeleting"
+                    @click="closeModal">Close</Button>
+                <Button type="error" size="small" :loading="isDeleting" :disabled="isDeleting"
                     @click="deleteData">Delete</Button>
             </template>
         </Modal>
@@ -29,9 +31,7 @@ export default{
         }
     },
     methods:{
-        async deleteData() {
-            // this.$store.commit('setDeleteModal');
-            
+        async deleteData() {            
             this.isDeleting = true;
             const res = await this.callAPI('post', this.getDeleteModalObj.deleteUrl, this.getDeleteModalObj.data);
             if (res.status === 200) {
@@ -41,7 +41,12 @@ export default{
                 this.err("Something went wrong");
                 this.$store.commit('setDeleteModal', false);
             }
+            this.isDeleting = false;
         },
+
+        closeModal(){
+            this.$store.commit('setDeleteModal', false);
+        }
     },
     computed:{
         ...mapGetters(['getDeleteModalObj'])

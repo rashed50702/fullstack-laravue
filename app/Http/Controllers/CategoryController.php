@@ -40,7 +40,7 @@ class CategoryController extends Controller
 
     public function deleteFileFromServer($fileName)
     {
-        $filePath = public_path() . '/uploads/' . $fileName;
+        $filePath = public_path().$fileName;
         if (file_exists($filePath)) {
             @unlink($filePath);
         }
@@ -134,8 +134,9 @@ class CategoryController extends Controller
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function destroy($id)
+    public function destroy(Request $request)
     {
-        //
+        $this->deleteFileFromServer($request->iconImage);
+        return Category::where('id', $request->id)->delete();
     }
 }

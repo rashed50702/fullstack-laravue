@@ -19,6 +19,7 @@ Route::post('delete-image', [CategoryController::class, 'deleteImage']);
 Route::post('category-save', [CategoryController::class, 'store']);
 Route::post('category-update', [CategoryController::class, 'update']);
 Route::get('categories-list', [CategoryController::class, 'index']);
+Route::post('delete-category', [CategoryController::class, 'destroy']);
 
 
 Route::get('{slug}', function () {

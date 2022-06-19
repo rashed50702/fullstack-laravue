@@ -64,7 +64,6 @@
         </Modal>
 
         <!-- Deleting Modal -->
-
         <deleteModal></deleteModal>
 
     </div>
@@ -166,13 +165,11 @@ export default {
                 deletingIndex: i,
                 isDeleted: false
             }
-            this.$store.commit('setDeletingModalObj', deleteModalObj);
-            console.log("delete modal called");
-            
+            this.$store.commit('setDeletingModalObj', deleteModalObj);            
         }
     },
     components:{
-        deleteModal, testDeleteModal
+        deleteModal
     },
     computed: {
         ...mapGetters(['getDeleteModalObj'])
