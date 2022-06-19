@@ -1,4 +1,3 @@
-import { createApp } from 'vue'
 import { createStore } from 'vuex'
 
 export default createStore({
@@ -10,7 +9,7 @@ export default createStore({
             data: null,
             deletingIndex: -1,
             isDeleted: false
-        }
+        },
     },
 
     getters: {
@@ -28,13 +27,11 @@ export default createStore({
             state.counter += data;
         },
         setDeleteModal(state, data){
-            // state.deleteModalObj.deletingModal = false;
-            // state.deleteModalObj.isDeleted = data;
             const deleteModalObj= {
                 deletingModal: false,
                 deleteUrl: '',
                 data: null,
-                deletingIndex: -1,
+                deletingIndex: state.deleteModalObj.deletingIndex,
                 isDeleted: data
             }
 
@@ -42,7 +39,6 @@ export default createStore({
         },
         setDeletingModalObj(state, data){
             state.deleteModalObj = data
-            // console.log(data);
         }
     },
 

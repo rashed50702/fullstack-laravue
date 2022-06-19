@@ -17,7 +17,6 @@
                     @click="deleteData">Delete</Button>
             </template>
         </Modal>
-        <input type="text" :value="getDeleteModalObj.deletingModal">
     </div>
 </template>
 
@@ -36,7 +35,7 @@ export default{
             this.isDeleting = true;
             const res = await this.callAPI('post', this.getDeleteModalObj.deleteUrl, this.getDeleteModalObj.data);
             if (res.status === 200) {
-                this.success("Tag has been deleted successfully!");
+                this.success("Data has been deleted successfully!");
                 this.$store.commit('setDeleteModal', true);
             } else {
                 this.err("Something went wrong");

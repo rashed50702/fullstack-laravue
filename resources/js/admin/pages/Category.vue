@@ -283,8 +283,9 @@ export default {
             this.isDeleting = true;
             const res = await this.callAPI('post', 'delete-tag', this.deleteItem);
             if (res.status === 200) {
-                this.tags.splice(this.deletingIndex, 1);
-                this.success("Tag has been deleted successfully!");
+                this.categories.splice(this.deletingIndex, 1);
+                this.success("Category has been deleted successfully!");
+                console.log(this.deletingIndex);
             } else {
                 this.err("Something went wrong");
             }

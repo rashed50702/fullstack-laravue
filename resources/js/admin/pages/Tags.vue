@@ -17,7 +17,7 @@
                     </tr>
 
                     <!-- TABLE ITEMS -->
-                    <tr v-for="(tag, i) in tags" :key="i" v-if="tags.length">
+                    <tr v-for="(tag, i) in tags" :key="tag.id" v-if=" tags.length">
                         <td>{{ i + 1 }}</td>
                         <td class="_table_name">{{ tag.tagName }} - {{ tag.id }}</td>
                         <td>{{ tag.created_at }}</td>
@@ -64,30 +64,14 @@
         </Modal>
 
         <!-- Deleting Modal -->
-        <!-- <Modal v-model="deletingModal" width="360">
-            <template #header>
-                <p style="color:#f60;text-align:center">
-                    <Icon type="ios-information-circle"></Icon>
-                    <span>Delete confirmation</span>
-                </p>
-            </template>
-            <div style="text-align:center">
-                <p>Are you sure you want to delete?.</p>
-            </div>
-            <template #footer>
-                <Button type="error" size="large" long :loading="isDeleting" :disabled="isDeleting"
-                    @click="deleteData">Delete</Button>
-            </template>
-        </Modal> -->
+
         <deleteModal></deleteModal>
-        <!-- <testDeleteModal></testDeleteModal> -->
 
     </div>
 </template>
 
 <script>
 import deleteModal from '../components/deleteModal.vue';
-import testDeleteModal from '../components/testDeleteModal.vue';
 import { mapGetters } from 'vuex';
 
 export default {
@@ -174,18 +158,6 @@ export default {
             this.index = index;
         },
 
-        async deleteData() {
-            this.isDeleting = true;
-            const res = await this.callAPI('post', 'delete-tag', this.deleteItem);
-            if (res.status === 200) {
-                this.tags.splice(this.deletingIndex, 1);
-                this.success("Tag has been deleted successfully!");
-            } else {
-                this.err("Something went wrong");
-            }
-            this.isDeleting = false;
-            this.deletingModal = false;
-        },
         showDeletingModal(tag, i) {
             const deleteModalObj = {
                 deletingModal: true,
@@ -196,9 +168,7 @@ export default {
             }
             this.$store.commit('setDeletingModalObj', deleteModalObj);
             console.log("delete modal called");
-            // this.deleteItem = tag;
-            // this.deletingIndex = i;
-            // this.deletingModal = true;
+            
         }
     },
     components:{
@@ -209,10 +179,8 @@ export default {
     },
     watch:{
         getDeleteModalObj(obj){
-            console.log(obj);
             if (obj.isDeleted){
-                console.log("inside if");
-                this.tags.splice(obj.deletingIndex, 1);
+                this.tags.splice(obj.deletingIndex,1);
             }
         }
     }
