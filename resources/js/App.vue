@@ -1,7 +1,8 @@
 <template>
-     <div>
-      <!--========== ADMIN SIDE MENU one ========-->
-      <div class="_1side_menu" >
+  <div>
+    <div v-if="isLoggedIn">
+      <!--========== ADMIN SIDE MENU ========-->
+      <div class="_1side_menu">
         <div class="_1side_menu_logo">
           <h3 style="text-align:center;">Logo Image</h3>
           <!--<img src="/img/logo.jpg" style="width: 108px;margin-left: 68px;"/>-->
@@ -17,10 +18,26 @@
           <!--~~~ MENU LIST ~~~~~~-->
           <div class="_1side_menu_list">
             <ul class="_1side_menu_list_ul">
-              <li><router-link to="/"><Icon type="ios-speedometer" /> Dashboard</router-link></li>
-              <li><router-link to="/tags"><Icon type="ios-speedometer" /> Tags</router-link></li>
-              <li><router-link to="/categories"><Icon type="ios-speedometer" /> Categories</router-link></li>
-              <li><router-link to="/admin-users"><Icon type="ios-speedometer" /> Admin Users</router-link></li>
+              <li>
+                <router-link to="/">
+                  <Icon type="ios-speedometer" /> Dashboard
+                </router-link>
+              </li>
+              <li>
+                <router-link to="/tags">
+                  <Icon type="ios-speedometer" /> Tags
+                </router-link>
+              </li>
+              <li>
+                <router-link to="/categories">
+                  <Icon type="ios-speedometer" /> Categories
+                </router-link>
+              </li>
+              <li>
+                <router-link to="/admin-users">
+                  <Icon type="ios-speedometer" /> Admin Users
+                </router-link>
+              </li>
             </ul>
           </div>
         </div>
@@ -35,17 +52,25 @@
               <li>
                 <Icon type="ios-list" />
               </li>
-              <!--<li><Icon type="ios-albums" /></li>-->
+              <li>
+                <Icon type="ios-albums" />
+              </li>
             </ul>
           </div>
         </div>
       </div>
       <!--========= HEADER ==========-->
-
-      <router-view></router-view>
     </div>
+    <router-view></router-view>
+  </div>
 </template>
 
 <script>
-export default {}
+export default {
+  data(){
+    return {
+      isLoggedIn: false,
+    }
+  }
+}
 </script>
