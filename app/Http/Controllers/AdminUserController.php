@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\User;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Response;
 use Illuminate\Support\Facades\Validator;
@@ -15,9 +16,43 @@ class AdminUserController extends Controller
      *
      * @return \Illuminate\Http\Response
      */
-    public function index()
+    public function index(Request $request)
+    {
+        // return Auth::user();
+        if(!Auth::check() && $request->path() != 'login')
+        {
+            return redirect('/login');
+        }
+
+        if(!Auth::check() && $request->path() == 'login'){
+            return view('app');
+        }
+
+
+        ///if you are logged in and an admin user
+        $user = Auth::user();
+        if($user->userType == 'User' && $request->path() != 'login')
+        {
+            return redirect('/login');
+        }
+        if($user->userType != 'User' && $request->path() == 'login')
+        {
+            return redirect('/');
+        }
+        
+        return view('app');
+    }
+
+
+    public function adminUserList()
     {
         return User::where('userType', '!=', 'User')->get();
+    }
+
+    public function logout()
+    {
+        Auth::logout();
+        return redirect('/login');
     }
 
     /**
@@ -135,5 +170,33 @@ class AdminUserController extends Controller
     public function destroy($id)
     {
         //
+    }
+
+    public function adminLogin(Request $request)
+    {
+        // return $request->all();
+        // $this->validate($request, [
+        //     'email' => 'required|email',
+        //     'password' => 'required|min:6',
+        // ]);
+
+        $validator = Validator::make($request->all(), [
+            'email' => 'required|email',
+            'password' => 'required|min:6',
+        ]);
+
+        if ($validator->fails()) {
+            return Response::json(['errors' => $validator->errors()->all(), 'status' => 422]);
+        }
+
+        if(Auth::attempt(['email' => $request->email, 'password' => $request->password])){
+            return Response::json([
+                'msg' => 'You are logged in!'
+            ]);
+        }else{
+            return Response::json([
+                'msg' => 'Incorrect login details!'
+            ], 401);
+        }
     }
 }

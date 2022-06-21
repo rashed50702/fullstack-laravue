@@ -15,6 +15,8 @@ Route::get('tag-list', [TagController::class, 'index']);
 Route::post('tags', [TagController::class, 'store']);
 Route::post('tag-edit', [TagController::class, 'update']);
 Route::post('delete-tag', [TagController::class, 'deleteTag']);
+
+
 Route::post('category-img-upload', [CategoryController::class, 'imgUpload']);
 Route::post('delete-image', [CategoryController::class, 'deleteImage']);
 Route::post('category-save', [CategoryController::class, 'store']);
@@ -22,11 +24,19 @@ Route::post('category-update', [CategoryController::class, 'update']);
 Route::get('categories-list', [CategoryController::class, 'index']);
 Route::post('delete-category', [CategoryController::class, 'destroy']);
 
-Route::get('admin-user-list', [AdminUserController::class, 'index']);
+Route::get('admin-user-list', [AdminUserController::class, 'adminUserList']);
 Route::post('save-admin-user', [AdminUserController::class, 'store']);
 Route::post('update-admin-user', [AdminUserController::class, 'update']);
+Route::post('admin-login', [AdminUserController::class, 'adminLogin']);
 
 
-Route::get('{slug}', function () {
-    return view('app');
-})->where('slug', '.*');
+Route::get('/', [AdminUserController::class, 'index']);
+Route::get('logout', [AdminUserController::class, 'logout']);
+Route::any('{slug}', [AdminUserController::class, 'index']);
+
+
+
+
+// Route::get('{slug}', function () {
+//     return view('app');
+// })->where('slug', '.*');
