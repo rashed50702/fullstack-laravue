@@ -19847,6 +19847,10 @@ __webpack_require__.r(__webpack_exports__);
     return {
       isLoggedIn: false
     };
+  },
+  created: function created() {
+    this.$store.commit('updateUser', window.user);
+    console.log(window.user);
   }
 });
 
@@ -19995,7 +19999,7 @@ function _asyncToGenerator(fn) { return function () { var self = this, args = ar
           switch (_context.prev = _context.next) {
             case 0:
               _context.next = 2;
-              return _this.callAPI('get', 'admin-user-list');
+              return _this.callAPI('get', 'admin/admin-user-list');
 
             case 2:
               res = _context.sent;
@@ -20058,7 +20062,7 @@ function _asyncToGenerator(fn) { return function () { var self = this, args = ar
 
               case 8:
                 _context2.next = 10;
-                return _this2.callAPI('post', 'save-admin-user', _this2.formData);
+                return _this2.callAPI('post', 'admin/save-admin-user', _this2.formData);
 
               case 10:
                 res = _context2.sent;
@@ -20126,7 +20130,7 @@ function _asyncToGenerator(fn) { return function () { var self = this, args = ar
 
               case 6:
                 _context3.next = 8;
-                return _this3.callAPI('post', 'update-admin-user', _this3.formDataEdit);
+                return _this3.callAPI('post', 'admin/update-admin-user', _this3.formDataEdit);
 
               case 8:
                 res = _context3.sent;
@@ -20173,7 +20177,7 @@ function _asyncToGenerator(fn) { return function () { var self = this, args = ar
     showDeletingModal: function showDeletingModal(tag, i) {
       var deleteModalObj = {
         deletingModal: true,
-        deleteUrl: '/delete-tag',
+        deleteUrl: 'admin/delete-tag',
         data: tag,
         deletingIndex: i,
         isDeleted: false
@@ -20261,7 +20265,7 @@ function _asyncToGenerator(fn) { return function () { var self = this, args = ar
             case 0:
               _this.token = window.Laravel.csrfToken;
               _context.next = 3;
-              return _this.callAPI('get', 'categories-list');
+              return _this.callAPI('get', 'admin/categories-list');
 
             case 3:
               res = _context.sent;
@@ -20335,7 +20339,7 @@ function _asyncToGenerator(fn) { return function () { var self = this, args = ar
                 }
 
                 _context2.next = 4;
-                return _this2.callAPI('post', 'delete-image', {
+                return _this2.callAPI('post', 'admin/delete-image', {
                   imageName: image
                 });
 
@@ -20386,7 +20390,7 @@ function _asyncToGenerator(fn) { return function () { var self = this, args = ar
               case 4:
                 _this3.formData.iconImage = "".concat(_this3.formData.iconImage);
                 _context3.next = 7;
-                return _this3.callAPI('post', 'category-save', _this3.formData);
+                return _this3.callAPI('post', 'admin/category-save', _this3.formData);
 
               case 7:
                 res = _context3.sent;
@@ -20451,7 +20455,7 @@ function _asyncToGenerator(fn) { return function () { var self = this, args = ar
               case 4:
                 _this4.formDataEdit.iconImage = "".concat(_this4.formDataEdit.iconImage);
                 _context4.next = 7;
-                return _this4.callAPI('post', 'category-update', _this4.formDataEdit);
+                return _this4.callAPI('post', 'admin/category-update', _this4.formDataEdit);
 
               case 7:
                 res = _context4.sent;
@@ -20502,7 +20506,7 @@ function _asyncToGenerator(fn) { return function () { var self = this, args = ar
     showDeletingModal: function showDeletingModal(category, i) {
       var deleteModalObj = {
         deletingModal: true,
-        deleteUrl: '/delete-category',
+        deleteUrl: 'admin/delete-category',
         data: category,
         deletingIndex: i,
         isDeleted: false
@@ -20584,7 +20588,7 @@ function _asyncToGenerator(fn) { return function () { var self = this, args = ar
           switch (_context.prev = _context.next) {
             case 0:
               _context.next = 2;
-              return _this.callAPI('get', 'tag-list');
+              return _this.callAPI('get', 'admin/tag-list');
 
             case 2:
               res = _context.sent;
@@ -20623,7 +20627,7 @@ function _asyncToGenerator(fn) { return function () { var self = this, args = ar
 
               case 2:
                 _context2.next = 4;
-                return _this2.callAPI('post', 'tags', _this2.formData);
+                return _this2.callAPI('post', 'admin/tags', _this2.formData);
 
               case 4:
                 res = _context2.sent;
@@ -20676,7 +20680,7 @@ function _asyncToGenerator(fn) { return function () { var self = this, args = ar
 
               case 2:
                 _context3.next = 4;
-                return _this3.callAPI('post', 'tag-edit', _this3.formDataEdit);
+                return _this3.callAPI('post', 'admin/tag-edit', _this3.formDataEdit);
 
               case 4:
                 res = _context3.sent;
@@ -20721,7 +20725,7 @@ function _asyncToGenerator(fn) { return function () { var self = this, args = ar
     showDeletingModal: function showDeletingModal(tag, i) {
       var deleteModalObj = {
         deletingModal: true,
-        deleteUrl: '/delete-tag',
+        deleteUrl: '/admin/delete-tag',
         data: tag,
         deletingIndex: i,
         isDeleted: false
@@ -20782,19 +20786,41 @@ function _asyncToGenerator(fn) { return function () { var self = this, args = ar
           while (1) {
             switch (_context.prev = _context.next) {
               case 0:
-                // if (this.formData.email.trim() == '')
-                //     return this.err('Email is required');
-                // if (!this.validEmail(this.formData.email))
-                //     return this.err('Please enter a valid email address!');
-                // if (this.formData.password.trim() == '')
-                //     return this.err('Password is required');
-                // if (this.formData.password.length < 6)
-                //     return this.err('Incorrect credentials!');
-                _this.isLogging = true;
-                _context.next = 3;
-                return _this.callAPI('post', 'admin-login', _this.formData).then(function (response) {
-                  console.log(response);
+                if (!(_this.formData.email.trim() == '')) {
+                  _context.next = 2;
+                  break;
+                }
 
+                return _context.abrupt("return", _this.err('Email is required'));
+
+              case 2:
+                if (_this.validEmail(_this.formData.email)) {
+                  _context.next = 4;
+                  break;
+                }
+
+                return _context.abrupt("return", _this.err('Please enter a valid email address!'));
+
+              case 4:
+                if (!(_this.formData.password.trim() == '')) {
+                  _context.next = 6;
+                  break;
+                }
+
+                return _context.abrupt("return", _this.err('Password is required'));
+
+              case 6:
+                if (!(_this.formData.password.length < 6)) {
+                  _context.next = 8;
+                  break;
+                }
+
+                return _context.abrupt("return", _this.err('Incorrect credentials!'));
+
+              case 8:
+                _this.isLogging = true;
+                _context.next = 11;
+                return _this.callAPI('post', 'login', _this.formData).then(function (response) {
                   if (response.data.status === 422) {
                     var errors = response.data.errors;
 
@@ -20803,6 +20829,8 @@ function _asyncToGenerator(fn) { return function () { var self = this, args = ar
 
                       _this.err(errors[field]);
                     }
+                  } else {
+                    window.location = '/';
                   }
                 })["catch"](function (error) {
                   if (error.response.status === 401) {
@@ -20812,10 +20840,10 @@ function _asyncToGenerator(fn) { return function () { var self = this, args = ar
                   }
                 });
 
-              case 3:
+              case 11:
                 _this.isLogging = false;
 
-              case 4:
+              case 12:
               case "end":
                 return _context.stop();
             }
@@ -20890,15 +20918,21 @@ var _hoisted_10 = /*#__PURE__*/(0,vue__WEBPACK_IMPORTED_MODULE_0__.createTextVNo
 var _hoisted_11 = /*#__PURE__*/(0,vue__WEBPACK_IMPORTED_MODULE_0__.createTextVNode)(" Admin Users ");
 
 var _hoisted_12 = {
+  href: "/logout"
+};
+
+var _hoisted_13 = /*#__PURE__*/(0,vue__WEBPACK_IMPORTED_MODULE_0__.createTextVNode)(" Logout ");
+
+var _hoisted_14 = {
   "class": "header"
 };
-var _hoisted_13 = {
+var _hoisted_15 = {
   "class": "_2menu _box_shadow"
 };
-var _hoisted_14 = {
+var _hoisted_16 = {
   "class": "_2menu_logo"
 };
-var _hoisted_15 = {
+var _hoisted_17 = {
   "class": "open_button"
 };
 function render(_ctx, _cache, $props, $setup, $data, $options) {
@@ -20908,7 +20942,7 @@ function render(_ctx, _cache, $props, $setup, $data, $options) {
 
   var _component_router_view = (0,vue__WEBPACK_IMPORTED_MODULE_0__.resolveComponent)("router-view");
 
-  return (0,vue__WEBPACK_IMPORTED_MODULE_0__.openBlock)(), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementBlock)("div", null, [$data.isLoggedIn ? ((0,vue__WEBPACK_IMPORTED_MODULE_0__.openBlock)(), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementBlock)("div", _hoisted_1, [(0,vue__WEBPACK_IMPORTED_MODULE_0__.createCommentVNode)("========== ADMIN SIDE MENU ========"), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("div", _hoisted_2, [_hoisted_3, (0,vue__WEBPACK_IMPORTED_MODULE_0__.createCommentVNode)("~~~~~~~~ MENU CONTENT ~~~~~~~~"), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("div", _hoisted_4, [_hoisted_5, (0,vue__WEBPACK_IMPORTED_MODULE_0__.createCommentVNode)("~~~ MENU LIST ~~~~~~"), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("div", _hoisted_6, [(0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("ul", _hoisted_7, [(0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("li", null, [(0,vue__WEBPACK_IMPORTED_MODULE_0__.createVNode)(_component_router_link, {
+  return (0,vue__WEBPACK_IMPORTED_MODULE_0__.openBlock)(), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementBlock)("div", null, [_ctx.$store.state.user ? ((0,vue__WEBPACK_IMPORTED_MODULE_0__.openBlock)(), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementBlock)("div", _hoisted_1, [(0,vue__WEBPACK_IMPORTED_MODULE_0__.createCommentVNode)("========== ADMIN SIDE MENU ========"), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("div", _hoisted_2, [_hoisted_3, (0,vue__WEBPACK_IMPORTED_MODULE_0__.createCommentVNode)("~~~~~~~~ MENU CONTENT ~~~~~~~~"), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("div", _hoisted_4, [_hoisted_5, (0,vue__WEBPACK_IMPORTED_MODULE_0__.createCommentVNode)("~~~ MENU LIST ~~~~~~"), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("div", _hoisted_6, [(0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("ul", _hoisted_7, [(0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("li", null, [(0,vue__WEBPACK_IMPORTED_MODULE_0__.createVNode)(_component_router_link, {
     to: "/"
   }, {
     "default": (0,vue__WEBPACK_IMPORTED_MODULE_0__.withCtx)(function () {
@@ -20952,7 +20986,9 @@ function render(_ctx, _cache, $props, $setup, $data, $options) {
     _: 1
     /* STABLE */
 
-  })])])])])]), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createCommentVNode)("========== ADMIN SIDE MENU ========"), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createCommentVNode)("========= HEADER =========="), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("div", _hoisted_12, [(0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("div", _hoisted_13, [(0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("div", _hoisted_14, [(0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("ul", _hoisted_15, [(0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("li", null, [(0,vue__WEBPACK_IMPORTED_MODULE_0__.createVNode)(_component_Icon, {
+  })]), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("li", null, [(0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("a", _hoisted_12, [(0,vue__WEBPACK_IMPORTED_MODULE_0__.createVNode)(_component_Icon, {
+    type: "ios-speedometer"
+  }), _hoisted_13])])])])])]), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createCommentVNode)("========== ADMIN SIDE MENU ========"), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createCommentVNode)("========= HEADER =========="), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("div", _hoisted_14, [(0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("div", _hoisted_15, [(0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("div", _hoisted_16, [(0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("ul", _hoisted_17, [(0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("li", null, [(0,vue__WEBPACK_IMPORTED_MODULE_0__.createVNode)(_component_Icon, {
     type: "ios-list"
   })]), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("li", null, [(0,vue__WEBPACK_IMPORTED_MODULE_0__.createVNode)(_component_Icon, {
     type: "ios-albums"
@@ -21742,7 +21778,7 @@ function render(_ctx, _cache, $props, $setup, $data, $options) {
             "max-size": 2048,
             "on-exceeded-size": $options.handleMaxSize,
             ref: "clearUpload",
-            action: "category-img-upload"
+            action: "admin/category-img-upload"
           }, {
             "default": (0,vue__WEBPACK_IMPORTED_MODULE_0__.withCtx)(function () {
               return [(0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("div", _hoisted_15, [(0,vue__WEBPACK_IMPORTED_MODULE_0__.createVNode)(_component_Icon, {
@@ -21853,7 +21889,7 @@ function render(_ctx, _cache, $props, $setup, $data, $options) {
             "max-size": 2048,
             "on-exceeded-size": $options.handleMaxSize,
             ref: "clearUploadEdit",
-            action: "category-img-upload"
+            action: "admin/category-img-upload"
           }, {
             "default": (0,vue__WEBPACK_IMPORTED_MODULE_0__.withCtx)(function () {
               return [(0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("div", _hoisted_23, [(0,vue__WEBPACK_IMPORTED_MODULE_0__.createVNode)(_component_Icon, {
@@ -22743,7 +22779,8 @@ __webpack_require__.r(__webpack_exports__);
       data: null,
       deletingIndex: -1,
       isDeleted: false
-    }
+    },
+    user: false
   },
   getters: {
     getCounter: function getCounter(state) {
@@ -22770,6 +22807,9 @@ __webpack_require__.r(__webpack_exports__);
     },
     setDeletingModalObj: function setDeletingModalObj(state, data) {
       state.deleteModalObj = data;
+    },
+    updateUser: function updateUser(state, data) {
+      state.user = data;
     }
   },
   actions: {

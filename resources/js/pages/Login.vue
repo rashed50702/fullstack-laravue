@@ -73,25 +73,27 @@ export default {
 
     methods: {
         async handleSubmit(){
-            // if (this.formData.email.trim() == '')
-            //     return this.err('Email is required');
-            // if (!this.validEmail(this.formData.email))
-            //     return this.err('Please enter a valid email address!');
-            // if (this.formData.password.trim() == '')
-            //     return this.err('Password is required');
-            // if (this.formData.password.length < 6)
-            //     return this.err('Incorrect credentials!');
+            if (this.formData.email.trim() == '')
+                return this.err('Email is required');
+            if (!this.validEmail(this.formData.email))
+                return this.err('Please enter a valid email address!');
+            if (this.formData.password.trim() == '')
+                return this.err('Password is required');
+            if (this.formData.password.length < 6)
+                return this.err('Incorrect credentials!');
 
             this.isLogging = true
-            await this.callAPI('post', 'admin-login', this.formData)
+            await this.callAPI('post', 'login', this.formData)
                         .then((response) => {
-                            console.log(response);
-                            if(response.data.status === 422) {
+                            if (response.data.status === 422) {
                                 let errors = response.data.errors;
                                 for (let field of Object.keys(errors)) {
                                     this.err(errors[field]);
                                 }
+                            }else{
+                                window.location = '/';
                             }
+                            
                         }).catch((error) => {
                             if (error.response.status === 401){
                                 this.err(error.response.data.msg);

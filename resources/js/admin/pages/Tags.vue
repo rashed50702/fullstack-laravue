@@ -94,7 +94,7 @@ export default {
     },
 
     async created() {
-        const res = await this.callAPI('get', 'tag-list');
+        const res = await this.callAPI('get', 'admin/tag-list');
         if (res.status == 200) {
             this.tags = res.data;
         } else {
@@ -106,7 +106,7 @@ export default {
             if (this.formData.tagName.trim() == '')
                 return this.err('Tag name is required');
 
-            const res = await this.callAPI('post', 'tags', this.formData)
+            const res = await this.callAPI('post', 'admin/tags', this.formData)
             if (res.status === 201) {
                 this.tags.unshift(res.data);
                 this.success("Tag saved successfully!");
@@ -128,7 +128,7 @@ export default {
             if (this.formDataEdit.tagName.trim() == '')
                 return this.err('Tag name is required');
 
-            const res = await this.callAPI('post', 'tag-edit', this.formDataEdit)
+            const res = await this.callAPI('post', 'admin/tag-edit', this.formDataEdit)
 
             if (res.status === 200) {
                 if (res.data.status === 422) {
@@ -159,7 +159,7 @@ export default {
         showDeletingModal(tag, i) {
             const deleteModalObj = {
                 deletingModal: true,
-                deleteUrl: '/delete-tag',
+                deleteUrl: '/admin/delete-tag',
                 data: tag,
                 deletingIndex: i,
                 isDeleted: false

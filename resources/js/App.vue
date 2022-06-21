@@ -1,6 +1,6 @@
 <template>
   <div>
-    <div v-if="isLoggedIn">
+    <div v-if="$store.state.user">
       <!--========== ADMIN SIDE MENU ========-->
       <div class="_1side_menu">
         <div class="_1side_menu_logo">
@@ -38,6 +38,11 @@
                   <Icon type="ios-speedometer" /> Admin Users
                 </router-link>
               </li>
+              <li>
+                <a href="/logout">
+                  <Icon type="ios-speedometer" /> Logout
+                </a>
+              </li>
             </ul>
           </div>
         </div>
@@ -71,6 +76,11 @@ export default {
     return {
       isLoggedIn: false,
     }
+  },
+
+  created(){
+    this.$store.commit('updateUser', window.user)
+    console.log(window.user);
   }
 }
 </script>

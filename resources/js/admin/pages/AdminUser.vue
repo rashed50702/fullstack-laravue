@@ -128,7 +128,7 @@ export default {
     },
 
     async created() {
-        const res = await this.callAPI('get', 'admin-user-list');
+        const res = await this.callAPI('get', 'admin/admin-user-list');
         if (res.status == 200) {
             this.users = res.data;
         } else {
@@ -146,7 +146,7 @@ export default {
             if (this.formData.userType.trim() == '')
                 return this.err('User type is required');
 
-            const res = await this.callAPI('post', 'save-admin-user', this.formData)
+            const res = await this.callAPI('post', 'admin/save-admin-user', this.formData)
             if (res.status === 201) {
                 this.users.unshift(res.data);
                 this.success("Admin user saved successfully!");
@@ -171,7 +171,7 @@ export default {
             if (this.formDataEdit.userType.trim() == '')
                 return this.err('User type is required');
 
-            const res = await this.callAPI('post', 'update-admin-user', this.formDataEdit)
+            const res = await this.callAPI('post', 'admin/update-admin-user', this.formDataEdit)
 
             if (res.status === 200) {
                 if (res.data.status === 422) {
@@ -204,7 +204,7 @@ export default {
         showDeletingModal(tag, i) {
             const deleteModalObj = {
                 deletingModal: true,
-                deleteUrl: '/delete-tag',
+                deleteUrl: 'admin/delete-tag',
                 data: tag,
                 deletingIndex: i,
                 isDeleted: false

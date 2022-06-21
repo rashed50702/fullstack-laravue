@@ -10,6 +10,7 @@ export default createStore({
             deletingIndex: -1,
             isDeleted: false
         },
+        user: false
     },
 
     getters: {
@@ -39,6 +40,10 @@ export default createStore({
         },
         setDeletingModalObj(state, data){
             state.deleteModalObj = data
+        },
+
+        updateUser(state, data){
+            state.user = data
         }
     },
 

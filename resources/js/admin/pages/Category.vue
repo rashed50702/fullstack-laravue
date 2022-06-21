@@ -47,7 +47,7 @@
                 <Upload type="drag" :headers="{ 'x-csrf-token': token, 'X-Requested-With':'XMLHttpRequest'}"
                     :on-success="handleSuccess" :on-error="handleError" :format="['jpg','jpeg','png']"
                     :on-format-error="handleFormatError" :max-size="2048" :on-exceeded-size="handleMaxSize"
-                    ref="clearUpload" action="category-img-upload">
+                    ref="clearUpload" action="admin/category-img-upload">
                     <div style="padding: 20px 0">
                         <Icon type="ios-cloud-upload" size="52" style="color: #3399ff"></Icon>
                         <p>Click or drag files here to upload</p>
@@ -84,7 +84,7 @@
                 <Upload type="drag" :headers="{ 'x-csrf-token': token, 'X-Requested-With':'XMLHttpRequest'}"
                     :on-success="handleSuccess" :on-error="handleError" :format="['jpg','jpeg','png']"
                     :on-format-error="handleFormatError" :max-size="2048" :on-exceeded-size="handleMaxSize"
-                    v-show="isIconImageNew" ref="clearUploadEdit" action="category-img-upload">
+                    v-show="isIconImageNew" ref="clearUploadEdit" action="admin/category-img-upload">
                     <div style="padding: 20px 0">
                         <Icon type="ios-cloud-upload" size="52" style="color: #3399ff"></Icon>
                         <p>Click or drag files here to upload</p>
@@ -145,7 +145,7 @@ export default {
 
     async created() {
         this.token = window.Laravel.csrfToken;
-        const res = await this.callAPI('get', 'categories-list');
+        const res = await this.callAPI('get', 'admin/categories-list');
         if (res.status == 200) {
             this.categories = res.data;
         } else {
@@ -192,7 +192,7 @@ export default {
                 this.$refs.clearUpload.clearFiles();
             }
             
-            const res = await this.callAPI('post', 'delete-image', {imageName:image});
+            const res = await this.callAPI('post', 'admin/delete-image', {imageName:image});
             if(res.status != 200){
                 this.formData.iconImage = image;
                 this.err();
@@ -207,7 +207,7 @@ export default {
                 return this.err('Icon image is required');
             this.formData.iconImage = `${this.formData.iconImage}`;
 
-            const res = await this.callAPI('post', 'category-save', this.formData)
+            const res = await this.callAPI('post', 'admin/category-save', this.formData)
             if (res.status === 201) {
                 this.categories.unshift(res.data);
                 this.success("Category saved successfully!");
@@ -235,7 +235,7 @@ export default {
 
             this.formDataEdit.iconImage = `${this.formDataEdit.iconImage}`;
 
-            const res = await this.callAPI('post', 'category-update', this.formDataEdit)
+            const res = await this.callAPI('post', 'admin/category-update', this.formDataEdit)
 
             if (res.status === 200) {
                 if (res.data.status === 422) {
@@ -274,7 +274,7 @@ export default {
         showDeletingModal(category, i) {
             const deleteModalObj = {
                 deletingModal: true,
-                deleteUrl: '/delete-category',
+                deleteUrl: 'admin/delete-category',
                 data: category,
                 deletingIndex: i,
                 isDeleted: false
