@@ -4,6 +4,7 @@ import Login from "./pages/Login.vue";
 import Tags from "./admin/pages/Tags.vue";
 import Categories from "./admin/pages/Category.vue";
 import AdminUser from "./admin/pages/AdminUser.vue";
+import Role from "./admin/pages/Role.vue";
 
 const routes = [
     
@@ -31,6 +32,11 @@ const routes = [
         path: "/admin-users",
         name: "AdminUser",
         component: AdminUser,
+    },
+    {
+        path: "/role",
+        name: "Role",
+        component: Role,
     },
 ];
 

@@ -39,6 +39,11 @@
                 </router-link>
               </li>
               <li>
+                <router-link to="/role">
+                  <Icon type="ios-speedometer" /> Roles
+                </router-link>
+              </li>
+              <li>
                 <a href="/logout">
                   <Icon type="ios-speedometer" /> Logout
                 </a>

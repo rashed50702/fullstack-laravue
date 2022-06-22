@@ -5,6 +5,7 @@ use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\TagController;
 use App\Http\Controllers\CategoryController;
 use App\Http\Controllers\AdminUserController;
+use App\Http\Controllers\RoleController;
 
 Route::prefix("admin")->middleware([AdminCheck::class])->group(function(){
 
@@ -30,6 +31,13 @@ Route::prefix("admin")->middleware([AdminCheck::class])->group(function(){
         Route::post('save-admin-user', 'store');
         Route::post('update-admin-user', 'update');
         
+    });
+
+    Route::controller(RoleController::class)->group(function () {
+        Route::get('role-list', 'index');
+        Route::post('save-role', 'store');
+        Route::post('update-role', 'update');
+        Route::post('delete-role', 'delete');
     });
 
 });
