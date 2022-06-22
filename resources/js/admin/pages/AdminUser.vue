@@ -13,7 +13,7 @@
                         <th>#</th>
                         <th>Full Name</th>
                         <th>Email</th>
-                        <th>User Type</th>
+                        <th>User Role</th>
                         <th>Created At</th>
                         <th class="text-center">Action</th>
                     </tr>
@@ -23,7 +23,7 @@
                         <td>{{ i + 1 }}</td>
                         <td class="_table_name">{{ user.fullName }}</td>
                         <td>{{ user.email }}</td>
-                        <td>{{ user.userType }}</td>
+                        <td>{{ user.role ? user.role.roleName : '' }}</td>
                         <td>{{ user.created_at }}</td>
                         <td class="text-center">
                             <button class="_btn _action_btn edit_btn1" type="button"
@@ -49,10 +49,9 @@
                     <Input type="password" v-model="formData.password" placeholder="Enter password"></Input>
                 </FormItem>
                 <FormItem>
-                    <Select placeholder="Select User Type" v-model="formData.userType">
-                        <Option value="Admin">Admin</Option>
-                        <Option value="Editor">Editor</Option>
-                        <Option value="Publisher">Publisher</Option>
+                    <Select placeholder="Select User Type" v-model="formData.role_id">
+                        <Option v-if="roles.length" v-for="(r, i) in roles" :value="r.id" :key="r.i">{{r.roleName}}
+                        </Option>
                     </Select>
                 </FormItem>
                 <footer class="text-right">
@@ -77,10 +76,9 @@
                     <Input type="password" v-model="formDataEdit.password" placeholder="Enter password"></Input>
                 </FormItem>
                 <FormItem>
-                    <Select placeholder="Select User Type" v-model="formDataEdit.userType">
-                        <Option value="Admin">Admin</Option>
-                        <Option value="Editor">Editor</Option>
-                        <Option value="Publisher">Publisher</Option>
+                    <Select placeholder="Select User Type" v-model="formDataEdit.role_id">
+                        <Option v-if="roles.length" v-for="(r, i) in roles" :value="r.id" :key="r.i">{{r.roleName}}
+                        </Option>
                     </Select>
                 </FormItem>
                 <footer class="text-right">
@@ -108,16 +106,17 @@ export default {
             editModal: false,
             isSaving: false,
             users: [],
+            roles: [],
             formData: {
                 fullName: '',
                 email: '',
                 password: '',
-                userType: '',
+                role_id: null,
             },
             formDataEdit: {
                 fullName: '',
                 email: '',
-                userType: '',
+                role_id: null,
             },
             index: -1,
             deletingModal: false,
@@ -128,9 +127,19 @@ export default {
     },
 
     async created() {
-        const res = await this.callAPI('get', 'admin/admin-user-list');
+        const [res, resRole] = await Promise.all([
+            this.callAPI('get', 'admin/admin-user-list'),
+            this.callAPI('get', 'admin/role-list'),
+        ]);
+
         if (res.status == 200) {
             this.users = res.data;
+        } else {
+            this.err();
+        }
+
+        if (resRole.status == 200) {
+            this.roles = resRole.data;
         } else {
             this.err();
         }
@@ -143,8 +152,8 @@ export default {
                 return this.err('Email is required');
             if (this.formData.password.trim() == '')
                 return this.err('Password is required');
-            if (this.formData.userType.trim() == '')
-                return this.err('User type is required');
+            if (!this.formData.role_id)
+                return this.err('Role is required');
 
             const res = await this.callAPI('post', 'admin/save-admin-user', this.formData)
             if (res.status === 201) {
@@ -168,8 +177,8 @@ export default {
                 return this.err('Full name is required');
             if (this.formDataEdit.email.trim() == '')
                 return this.err('Email is required');
-            if (this.formDataEdit.userType.trim() == '')
-                return this.err('User type is required');
+            if (!this.formDataEdit.role_id)
+                return this.err('Role is required');
 
             const res = await this.callAPI('post', 'admin/update-admin-user', this.formDataEdit)
 
@@ -194,7 +203,7 @@ export default {
                 id: user.id,
                 fullName: user.fullName,
                 email: user.email,
-                userType: user.userType,
+                role_id: user.role_id,
             }
             this.formDataEdit = obj;
             this.editModal = true;

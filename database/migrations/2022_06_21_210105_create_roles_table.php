@@ -16,7 +16,8 @@ return new class extends Migration
         Schema::create('roles', function (Blueprint $table) {
             $table->id();
             $table->string('roleName');
-            $table->string('permission')->nullable();
+            $table->text('permission')->nullable();
+            $table->integer('isAdmin')->default(1);
             $table->timestamps();
         });
     }

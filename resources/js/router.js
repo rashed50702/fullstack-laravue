@@ -5,6 +5,7 @@ import Tags from "./admin/pages/Tags.vue";
 import Categories from "./admin/pages/Category.vue";
 import AdminUser from "./admin/pages/AdminUser.vue";
 import Role from "./admin/pages/Role.vue";
+import Permission from "./admin/pages/Permission.vue";
 
 const routes = [
     
@@ -37,6 +38,11 @@ const routes = [
         path: "/role",
         name: "Role",
         component: Role,
+    },
+    {
+        path: "/role-permissions",
+        name: "Permission",
+        component: Permission,
     },
 ];
 

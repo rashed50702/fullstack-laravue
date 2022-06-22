@@ -18,12 +18,14 @@ return new class extends Migration
             $table->string('fullName');
             $table->string('email')->unique();
             $table->string('password');
-            $table->string('userType')->default('user');
+            $table->unsignedBigInteger('role_id');
             $table->boolean('isActivated')->default(0);
             $table->string('passwordResetCode')->nullable();
             $table->string('activationCode')->nullable();
             $table->string('socialType')->nullable();
             $table->timestamps();
+
+            // $table->foreign('role_id')->references('id')->on('roles');
         });
     }
 

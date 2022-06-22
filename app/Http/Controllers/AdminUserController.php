@@ -46,7 +46,7 @@ class AdminUserController extends Controller
 
     public function adminUserList()
     {
-        return User::where('userType', '!=', 'User')->get();
+        return User::with('role')->get();
     }
 
     public function logout()
@@ -84,7 +84,7 @@ class AdminUserController extends Controller
             'fullName' => 'required',
             'email' => 'bail|required|email|unique:users',
             'password' => 'bail|required|min:6',
-            'userType' => 'required',
+            'role_id' => 'required',
         ]);
 
         if ($validator->fails()) {
@@ -97,7 +97,7 @@ class AdminUserController extends Controller
             'fullName' => $request->fullName,
             'email' => $request->email,
             'password' => $password,
-            'userType' => $request->userType,
+            'role_id' => $request->role_id,
         ]);
 
         return $data;
@@ -138,7 +138,7 @@ class AdminUserController extends Controller
             'fullName' => 'required',
             'email' => 'bail|required|unique:users,email,' . $request->id,
             'password' => 'nullable|min:6',
-            'userType' => 'required',
+            'role_id' => 'required',
         ]);
 
         if ($validator->fails()) {
@@ -148,7 +148,7 @@ class AdminUserController extends Controller
         $data = [
             'fullName' => $request->fullName,
             'email' => $request->email,
-            'userType' => $request->userType,
+            'role_id' => $request->role_id,
         ];
 
         if($request->password){

@@ -3101,4 +3101,9 @@ p {
     width: 60px;
     height: 60px;
   }
-  
+  .float-right{
+    float: right
+  }
+  .bold{
+    font-weight: bold;
+  }
