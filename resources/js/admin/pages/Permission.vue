@@ -15,10 +15,22 @@
                     </BreadcrumbItem>
                     </Col>
                     <Col span="12">
-                    <Select placeholder="Select Role" class="float-right" style="max-width: 300px;">
-                        <Option v-if="items.length" v-for="(r, i) in items" :value="r.id" :key="r.i">{{r.roleName}}
-                        </Option>
-                    </Select>
+                    <Row>
+                        <Col span="16">
+                        <Select placeholder="Select Role" class="float-right"
+                            style="max-width: 300px;padding-right: 5px;" v-model="role.id"
+                            @on-change="onRoleChange">
+                            <Option v-if="items.length" v-for="(r, i) in items" :value="r.id" :key="r.i">
+                                {{r.roleName}}
+                            </Option>
+                        </Select>
+                        </Col>
+                        <Col span="8">
+                        <Button type="success" long :disabled="isSaving" :loading="isSaving" @click="savingData">{{
+                            isSaving ? 'SAVING...' :
+                            'SAVE' }}</Button>
+                        </Col>
+                    </Row>
                     </Col>
                 </Row>
             </Breadcrumb>
@@ -66,13 +78,25 @@
 export default {
     data() {
         return {
+            role: {
+                id: null
+            },
             items: [],
-            resources: [
+            defaultResources: [
+                {resourceName: 'Home', read: false, write: false, update: false, delete: false, name: '/'},
                 {resourceName: 'Tags', read: false, write: false, update: false, delete: false, name: 'tags'},
                 { resourceName: 'Categories', read: false, write: false, update: false, delete: false, name: 'categories'},
-                { resourceName: 'Admin Users', read: false, write: false, update: false, delete: false, name: 'AdminUser'},
-                { resourceName: 'Roles', read: false, write: false, update: false, delete: false, name: 'role'},
-                { resourceName: 'Role Permissions', read: false, write: false, update: false, delete: false, name: 'Permission'},
+                { resourceName: 'Admin Users', read: false, write: false, update: false, delete: false, name: 'admin-users'},
+                { resourceName: 'Roles', read: false, write: false, update: false, delete: false, name: 'roles'},
+                { resourceName: 'Role Permissions', read: false, write: false, update: false, delete: false, name: 'role-permissions'},
+            ],
+            resources: [
+                { resourceName: 'Home', read: false, write: false, update: false, delete: false, name: '/' },
+                { resourceName: 'Tags', read: false, write: false, update: false, delete: false, name: 'tags' },
+                { resourceName: 'Categories', read: false, write: false, update: false, delete: false, name: 'categories' },
+                { resourceName: 'Admin Users', read: false, write: false, update: false, delete: false, name: 'admin-users' },
+                { resourceName: 'Roles', read: false, write: false, update: false, delete: false, name: 'roles' },
+                { resourceName: 'Role Permissions', read: false, write: false, update: false, delete: false, name: 'role-permissions' },
             ],
             isSaving: false,
         }
@@ -82,14 +106,46 @@ export default {
         const res = await this.callAPI('get', 'admin/role-list');
         if (res.status == 200) {
             this.items = res.data;
+            if(res.data.length){
+                this.role.id = res.data[0].id;
+                if(res.data[0].permission){
+                    this.resources = JSON.parse(res.data[0].permission)
+                }
+            }
         } else {
             this.err();
         }
 
-        console.log(this.$route);
     },
     methods: {
-        
+        async savingData(){
+            let data = JSON.stringify(this.resources);
+            const res = await this.callAPI('post', 'admin/saving-permissions', {'permission' : data, id: this.role.id});
+            if (res.status === 200) {
+                this.success("Permissions assigned successfully!");
+                let index = this.items.findIndex(item => item.id == this.role.id);
+                this.items[index].permission = data;
+            } else {
+                if (res.status === 422) {
+                    let errors = res.data.errors;
+                    for (let field of Object.keys(errors)) {
+                        this.err(errors[field]);
+                    }
+                } else {
+                    this.err("Oops!", "Something went wrong!");
+                }
+            }
+        },
+
+        onRoleChange(){
+            let index = this.items.findIndex(item => item.id == this.role.id);
+            let permission = this.items[index].permission;
+            if(!permission){
+                this.resources = this.defaultResources;
+            }else{
+                this.resources = JSON.parse(permission);
+            }
+        }
     },
 }
 </script>

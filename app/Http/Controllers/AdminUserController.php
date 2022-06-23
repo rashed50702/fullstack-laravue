@@ -40,7 +40,32 @@ class AdminUserController extends Controller
             return redirect('/');
         }
         
-        return view('app');
+        // return view('app');
+
+        return $this->checkForPermission($user, $request);
+    }
+
+    public function checkForPermission($user, $request)
+    {
+        $permission = json_decode($user->role->permission);
+
+        if(!$permission) return view('app');
+
+        $hasPermission = false;
+
+        foreach($permission as $p){
+            if($p->name == $request->path()){
+                if($p->read){
+                    $hasPermission = true;
+                }
+            }
+        }
+
+        if($hasPermission){
+            return view('app');
+        }else{
+            return view('404');
+        }
     }
 
 

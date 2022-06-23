@@ -58,4 +58,21 @@ class RoleController extends Controller
         $data = Role::where('id', $request->id)->delete();
         return $data;
     }
+
+    public function savingPermissions(Request $request)
+    {
+        $validator = Validator::make($request->all(), [
+            'id' => 'required',
+            'permission' => 'required',
+        ]);
+
+        if ($validator->fails()) {
+            return Response::json(['errors' => $validator->errors()->all(), 'status' => 422]);
+        }
+
+        $data = Role::where('id', $request->id)->update([
+            'permission' => $request->permission,
+        ]);
+        return $data;
+    }
 }

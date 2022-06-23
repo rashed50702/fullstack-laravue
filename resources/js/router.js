@@ -11,37 +11,37 @@ const routes = [
     
     {
         path: "/",
-        name: "Home",
+        name: "/",
         component: Home,
     },
     {
         path: "/login",
-        name: "Login",
+        name: "login",
         component: Login,
     },
     {
         path: "/tags",
-        name: "Tags",
+        name: "tags",
         component: Tags,
     },
     {
         path: "/categories",
-        name: "Categories",
+        name: "categories",
         component: Categories,
     },
     {
         path: "/admin-users",
-        name: "AdminUser",
+        name: "admin-users",
         component: AdminUser,
     },
     {
-        path: "/role",
-        name: "Role",
+        path: "/roles",
+        name: "roles",
         component: Role,
     },
     {
         path: "/role-permissions",
-        name: "Permission",
+        name: "role-permissions",
         component: Permission,
     },
 ];

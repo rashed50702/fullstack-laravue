@@ -38,6 +38,7 @@ Route::prefix("admin")->middleware([AdminCheck::class])->group(function(){
         Route::post('save-role', 'store');
         Route::post('update-role', 'update');
         Route::post('delete-role', 'delete');
+        Route::post('saving-permissions', 'savingPermissions');
     });
 
 });

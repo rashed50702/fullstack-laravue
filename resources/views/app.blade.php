@@ -10,9 +10,6 @@
     <title>Fullstack|Laravel|Vuejs</title>
     <link rel="stylesheet" href="/css/app.css" />
     <script>
-        window.user = "{{ Auth::user() ?? ''}}";
-    </script>
-    <script>
         (function() {
             window.Laravel = {
                 csrfToken: '{{ csrf_token() }}'
@@ -22,13 +19,14 @@
 </head>
 
 <body>
-    <div id="app"></div>
-    <!-- @php
-
-    @endphp
-    $user = Auth::user(); -->
+    <div id="app">
+        @if(Auth::check())
+        <main-component :user="{{Auth::user()}}" :permissions="{{Auth::user()->role->permission}}" />
+        @else
+        <main-component :user="false" />
+        @endif
+    </div>
     <script src="{{ mix('js/app.js') }}" type="text/javascript"></script>
 </body>
-
 
 </html>
