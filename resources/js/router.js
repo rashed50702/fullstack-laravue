@@ -43,7 +43,6 @@ const routes = [
         path: "/role-permissions",
         name: "role-permissions",
         component: Permission,
-        icon: '<Icon type="ios-cafe"></Icon>'
     },
 ];
 

@@ -1,11 +1,25 @@
 <template>
     <div class="content">
         <div class="_1adminOverveiw_table_recent _box_shadow _border_radious _mar_b30 _p20">
-            <p class="_title0">Tags
-                <Button type="default" size="small" @click="modal = true" v-if="isWritePermitted">
-                    <Icon type="ios-add" />Add New
-                </Button>
-            </p>
+            <Breadcrumb class="mb-2">
+                <Row>
+                    <Col span="12">
+                    <Breadcrumb>
+                        <BreadcrumbItem to="/">
+                            <Icon type="ios-home-outline"></Icon> Home
+                        </BreadcrumbItem>
+                        <BreadcrumbItem>
+                            <Icon type="ios-pricetags"></Icon> Tags
+                        </BreadcrumbItem>
+                    </Breadcrumb>
+                    </Col>
+                    <Col span="12" class="text-right">
+                    <Button type="default" size="small" @click="modal = true" v-if="isWritePermitted">
+                        <Icon type="ios-add" />Add New
+                    </Button>
+                    </Col>
+                </Row>
+            </Breadcrumb>
             <div class="_overflow _table_div">
                 <table class="table">
                     <!-- TABLE TITLE -->
@@ -169,7 +183,7 @@ export default {
         }
     },
     components:{
-        deleteModal
+        deleteModal,
     },
     computed: {
         ...mapGetters(['getDeleteModalObj'])

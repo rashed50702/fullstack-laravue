@@ -21,13 +21,13 @@
                             <div v-for="(menuItem, i) in permissions" :key="i" v-if="permissions.length">
                                 <li v-if="menuItem.read">
                                     <router-link :to="menuItem.name">
-                                        <Icon type="ios-speedometer" /> {{ menuItem.resourceName}}
+                                        <Icon :type='menuItem.iconType' /> {{ menuItem.resourceName}}
                                     </router-link>
                                 </li>
                             </div>
                             <li>
                                 <a href="/logout">
-                                    <Icon type="ios-speedometer" /> Logout
+                                    <Icon type="ios-power" />Logout
                                 </a>
                             </li>
                         </ul>
@@ -69,6 +69,7 @@ export default {
     created() {
         this.$store.commit('setUpdateUser', this.user);
         this.$store.commit('setUserPermission', this.permissions);
+        // console.log(this.permissions);
     }
 }
 </script>

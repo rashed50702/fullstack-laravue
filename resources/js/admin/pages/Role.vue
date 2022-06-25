@@ -1,11 +1,25 @@
 <template>
     <div class="content">
         <div class="_1adminOverveiw_table_recent _box_shadow _border_radious _mar_b30 _p20">
-            <p class="_title0">Roles
-                <Button type="default" size="small" @click="modal = true">
-                    <Icon type="ios-add" />Add New
-                </Button>
-            </p>
+            <Breadcrumb class="mb-2">
+                <Row>
+                    <Col span="12">
+                    <Breadcrumb>
+                        <BreadcrumbItem to="/">
+                            <Icon type="ios-home-outline"></Icon> Home
+                        </BreadcrumbItem>
+                        <BreadcrumbItem>
+                            <Icon type="ios-grid"></Icon> Roles
+                        </BreadcrumbItem>
+                    </Breadcrumb>
+                    </Col>
+                    <Col span="12" class="text-right">
+                    <Button type="default" size="small" @click="modal = true" v-if="isWritePermitted">
+                        <Icon type="ios-add" />Add New
+                    </Button>
+                    </Col>
+                </Row>
+            </Breadcrumb>
             <div class="_overflow _table_div">
                 <table class="table">
                     <!-- TABLE TITLE -->
@@ -22,10 +36,11 @@
                         <td class="_table_name">{{ item.roleName }}</td>
                         <td>{{ item.created_at }}</td>
                         <td class="text-center">
-                            <button class="_btn _action_btn edit_btn1" type="button"
-                                @click="showEditModal(item, i)">Edit</button>
+                            <button class="_btn _action_btn edit_btn1" type="button" @click="showEditModal(item, i)"
+                                v-if="isUpdatePermitted">Edit</button>
                             <button class="_btn _action_btn make_btn1 ml-2" type="button"
-                                @click="showDeletingModal(item, i)" :loading="item.isDeleting">Delete</button>
+                                @click="showDeletingModal(item, i)" :loading="item.isDeleting"
+                                v-if="isDeletePermitted">Delete</button>
                         </td>
                     </tr>
                 </table>
