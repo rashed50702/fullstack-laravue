@@ -11,7 +11,7 @@
                         <Icon type="logo-buffer"></Icon> Role Permissions
                     </BreadcrumbItem>
                     <BreadcrumbItem>
-                        <Icon type="ios-cafe"></Icon> Breadcrumb
+                        <Icon type="ios-cafe"></Icon> Breadcrumb {{$route}}
                     </BreadcrumbItem>
                     </Col>
                     <Col span="12">
@@ -103,6 +103,7 @@ export default {
     },
 
     async created() {
+        console.log(this.$route);
         const res = await this.callAPI('get', 'admin/role-list');
         if (res.status == 200) {
             this.items = res.data;
@@ -125,6 +126,7 @@ export default {
                 this.success("Permissions assigned successfully!");
                 let index = this.items.findIndex(item => item.id == this.role.id);
                 this.items[index].permission = data;
+                this.$router.go();
             } else {
                 if (res.status === 422) {
                     let errors = res.data.errors;

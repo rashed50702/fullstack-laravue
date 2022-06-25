@@ -2,7 +2,7 @@
     <div class="content">
         <div class="_1adminOverveiw_table_recent _box_shadow _border_radious _mar_b30 _p20">
             <p class="_title0">Tags
-                <Button type="default" size="small" @click="modal = true">
+                <Button type="default" size="small" @click="modal = true" v-if="isWritePermitted">
                     <Icon type="ios-add" />Add New
                 </Button>
             </p>
@@ -22,10 +22,11 @@
                         <td class="_table_name">{{ tag.tagName }} - {{ tag.id }}</td>
                         <td>{{ tag.created_at }}</td>
                         <td class="text-center">
-                            <button class="_btn _action_btn edit_btn1" type="button"
-                                @click="showEditModal(tag, i)">Edit</button>
+                            <button class="_btn _action_btn edit_btn1" type="button" @click="showEditModal(tag, i)"
+                                v-if="isUpdatePermitted">Edit</button>
                             <button class="_btn _action_btn make_btn1 ml-2" type="button"
-                                @click="showDeletingModal(tag, i)" :loading="tag.isDeleting">Delete</button>
+                                @click="showDeletingModal(tag, i)" :loading="tag.isDeleting"
+                                v-if="isDeletePermitted">Delete</button>
                         </td>
                     </tr>
                 </table>

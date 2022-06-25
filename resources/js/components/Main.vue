@@ -18,12 +18,13 @@
                     <!--~~~ MENU LIST ~~~~~~-->
                     <div class="_1side_menu_list">
                         <ul class="_1side_menu_list_ul">
-                            <li v-for="(menuItem, i) in permissions" :key="i" v-if="permissions.length">
-                                <router-link :to="menuItem.name" v-if="menuItem.read">
-                                    <Icon type="ios-speedometer" /> {{ menuItem.resourceName}}
-                                    <span v-if="menuItem.read">{{menuItem.read}}</span>
-                                </router-link>
-                            </li>
+                            <div v-for="(menuItem, i) in permissions" :key="i" v-if="permissions.length">
+                                <li v-if="menuItem.read">
+                                    <router-link :to="menuItem.name">
+                                        <Icon type="ios-speedometer" /> {{ menuItem.resourceName}}
+                                    </router-link>
+                                </li>
+                            </div>
                             <li>
                                 <a href="/logout">
                                     <Icon type="ios-speedometer" /> Logout
@@ -66,9 +67,8 @@ export default {
     },
 
     created() {
-        this.$store.commit('updateUser', this.user);
-        console.log(this.user);
-        console.log(this.permissions);
+        this.$store.commit('setUpdateUser', this.user);
+        this.$store.commit('setUserPermission', this.permissions);
     }
 }
 </script>

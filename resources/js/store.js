@@ -2,7 +2,6 @@ import { createStore } from 'vuex'
 
 export default createStore({
     state: {
-        counter: 1000,
         deleteModalObj: {
             deletingModal: false,
             deleteUrl: '',
@@ -10,23 +9,20 @@ export default createStore({
             deletingIndex: -1,
             isDeleted: false
         },
-        user: false
+        user: false,
+        userPermission: null
     },
 
     getters: {
-        getCounter(state){
-            return state.counter
-        },
         getDeleteModalObj(state){
             return state.deleteModalObj;
+        },
+        getUserPermission(state){
+            return state.userPermission;
         }
     },
 
     mutations: {
-        changeTheCounter(state, data){
-            // console.log(data);
-            state.counter += data;
-        },
         setDeleteModal(state, data){
             const deleteModalObj= {
                 deletingModal: false,
@@ -42,14 +38,11 @@ export default createStore({
             state.deleteModalObj = data
         },
 
-        updateUser(state, data){
+        setUpdateUser(state, data){
             state.user = data
+        },
+        setUserPermission(state, data){
+            state.userPermission = data
         }
     },
-
-    actions: {
-        changeCounterAction({commit}, data){
-            commit('changeTheCounter', data);
-        }
-    }
 }); 
