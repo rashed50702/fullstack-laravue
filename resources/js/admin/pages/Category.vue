@@ -36,6 +36,7 @@
                         <td>{{ i + 1 }}</td>
                         <td class="table_image">
                             <img :src="category.iconImage" alt="Image" v-if="category.iconImage">
+                            <img src="/uploads/default.png" alt="Image" v-else>
                         </td>
                         <td class="_table_name">{{ category.categoryName }}</td>
                         <td>{{ category.created_at }}</td>
@@ -94,7 +95,7 @@
                 <FormItem label="Category Name">
                     <Input v-model="formDataEdit.categoryName"></Input>
                 </FormItem>
-
+        
                 <Upload type="drag" :headers="{ 'x-csrf-token': token, 'X-Requested-With':'XMLHttpRequest'}"
                     :on-success="handleSuccess" :on-error="handleError" :format="['jpg','jpeg','png']"
                     :on-format-error="handleFormatError" :max-size="2048" :on-exceeded-size="handleMaxSize"
@@ -273,6 +274,9 @@ export default {
             //     categoryName: category.categoryName,
             //     iconImage: category.iconImage
             // }
+            if(category.iconImage == null){
+                this.isIconImageNew = true;
+            }
             this.formDataEdit = category;
             this.editModal = true;
             this.index = index;

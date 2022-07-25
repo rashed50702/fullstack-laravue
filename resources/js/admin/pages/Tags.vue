@@ -33,7 +33,7 @@
                     <!-- TABLE ITEMS -->
                     <tr v-for="(tag, i) in tags" :key="tag.id" v-if=" tags.length">
                         <td>{{ i + 1 }}</td>
-                        <td class="_table_name">{{ tag.tagName }} - {{ tag.id }}</td>
+                        <td class="_table_name">{{ tag.tagName }}</td>
                         <td>{{ tag.created_at }}</td>
                         <td class="text-center">
                             <button class="_btn _action_btn edit_btn1" type="button" @click="showEditModal(tag, i)"

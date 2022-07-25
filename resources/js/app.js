@@ -10,11 +10,6 @@ import 'view-ui-plus/dist/styles/viewuiplus.css'
 import locale from 'view-ui-plus/dist/locale/en-US';
 
 
-
-
-
-
-
 import common from './common'
 
 

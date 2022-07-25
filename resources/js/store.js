@@ -1,4 +1,5 @@
 import { createStore } from 'vuex'
+import tagsModule from './store/modules/tags.module'
 
 export default createStore({
     state: {
@@ -10,7 +11,12 @@ export default createStore({
             isDeleted: false
         },
         user: false,
-        userPermission: null
+        userPermission: null,
+        tagsState: tagsModule.state
+    },
+
+    modules:{
+        tagsModule
     },
 
     getters: {
@@ -19,6 +25,9 @@ export default createStore({
         },
         getUserPermission(state){
             return state.userPermission;
+        },
+        getTagsState(state){
+            return state.tagsState.tagList;
         }
     },
 

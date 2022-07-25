@@ -64,7 +64,7 @@ class AdminUserController extends Controller
         if($hasPermission){
             return view('app');
         }else{
-            return view('404');
+            return view('errors/404');
         }
     }
 

@@ -2,10 +2,13 @@
 
 namespace Database\Seeders;
 
+use App\Models\Tag;
 use App\Models\Role;
 use App\Models\User;
 use Illuminate\Database\Seeder;
 use Illuminate\Support\Facades\Hash;
+use Database\Seeders\TagsTableSeeder;
+use Database\Seeders\CategoriesTableSeeder;
 use Illuminate\Database\Console\Seeds\WithoutModelEvents;
 
 class DatabaseSeeder extends Seeder
@@ -26,8 +29,19 @@ class DatabaseSeeder extends Seeder
         
         Role::create([
             'roleName' => 'Admin',
-            'permission' => '[{"resourceName":"Home","iconType":"ios-home-outline","read":true,"write":true,"update":true,"delete":true,"name":"/"},{"resourceName":"Tags","iconType":"ios-pricetags","read":true,"write":true,"update":true,"delete":true,"name":"tags"},{"resourceName":"Categories","iconType":"ios-list-box","read":true,"write":true,"update":true,"delete":true,"name":"categories"},{"resourceName":"Admin Users","iconType":"ios-contacts","read":true,"write":true,"update":true,"delete":true,"name":"admin-users"},{"resourceName":"Roles","iconType":"ios-grid","read":true,"write":true,"update":true,"delete":true,"name":"roles"},{"resourceName":"Role Permissions","iconType":"ios-paper","read":true,"write":true,"update":true,"delete":true,"name":"role-permissions"}]',
+            'permission' => '[
+                {"resourceName":"Home","iconType":"ios-home-outline","read":true,"write":true,"update":true,"delete":true,"name":"/"},
+                {"resourceName":"Tags","iconType":"ios-pricetags","read":true,"write":true,"update":true,"delete":true,"name":"tags"},
+                {"resourceName":"Categories","iconType":"ios-list-box","read":true,"write":true,"update":true,"delete":true,"name":"categories"},
+                {"resourceName":"Create Blog","iconType":"ios-albums","read":true,"write":true,"update":true,"delete":true,"name":"create-blog"},
+                {"resourceName":"Admin Users","iconType":"ios-contacts","read":true,"write":true,"update":true,"delete":true,"name":"admin-users"},
+                {"resourceName":"Roles","iconType":"ios-grid","read":true,"write":true,"update":true,"delete":true,"name":"roles"},
+                {"resourceName":"Role Permissions","iconType":"ios-paper","read":true,"write":true,"update":true,"delete":true,"name":"role-permissions"}
+            ]',
         ]);
+
+        
+
         Role::create([
             'roleName' => 'Editor'
         ]);
@@ -39,6 +53,12 @@ class DatabaseSeeder extends Seeder
             'email' => 'admin@admin.com',
             'password' => Hash::make('123456'),
             'role_id' => 1
+        ]);
+
+
+        $this->call([
+            TagsTableSeeder::class,
+            CategoriesTableSeeder::class,
         ]);
     }
 }
