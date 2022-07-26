@@ -175,9 +175,10 @@ export default {
             const deleteModalObj = {
                 deletingModal: true,
                 deleteUrl: '/admin/delete-role',
-                data: item,
+                data: {id:item.id},
                 deletingIndex: i,
-                isDeleted: false
+                isDeleted: false,
+                deletingItemMsg: 'Role'
             }
             this.$store.commit('setDeletingModalObj', deleteModalObj);
         }

@@ -175,9 +175,10 @@ export default {
             const deleteModalObj = {
                 deletingModal: true,
                 deleteUrl: '/admin/delete-tag',
-                data: tag,
+                data: {id:tag.id},
                 deletingIndex: i,
-                isDeleted: false
+                isDeleted: false,
+                deletingItemMsg: 'Tag'
             }
             this.$store.commit('setDeletingModalObj', deleteModalObj);            
         }

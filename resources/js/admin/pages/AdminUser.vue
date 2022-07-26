@@ -225,13 +225,14 @@ export default {
             this.index = index;
         },
 
-        showDeletingModal(tag, i) {
+        showDeletingModal(user, i) {
             const deleteModalObj = {
                 deletingModal: true,
-                deleteUrl: 'admin/delete-tag',
-                data: tag,
+                deleteUrl: 'admin/delete-admin-user',
+                data: {id:user.id},
                 deletingIndex: i,
-                isDeleted: false
+                isDeleted: false,
+                deletingItemMsg: 'Admin User'
             }
             this.$store.commit('setDeletingModalObj', deleteModalObj);
         }

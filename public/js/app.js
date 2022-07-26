@@ -19875,14 +19875,15 @@ function _asyncToGenerator(fn) { return function () { var self = this, args = ar
             switch (_context.prev = _context.next) {
               case 0:
                 _this.isDeleting = true;
-                _context.next = 3;
+                _context.prev = 1;
+                _context.next = 4;
                 return _this.callAPI('post', _this.getDeleteModalObj.deleteUrl, _this.getDeleteModalObj.data);
 
-              case 3:
+              case 4:
                 res = _context.sent;
 
                 if (res.status === 200) {
-                  _this.success("Data has been deleted successfully!");
+                  _this.success(_this.getDeleteModalObj.deletingItemMsg + " has been deleted successfully!");
 
                   _this.$store.commit('setDeleteModal', true);
                 } else {
@@ -19892,13 +19893,23 @@ function _asyncToGenerator(fn) { return function () { var self = this, args = ar
                 }
 
                 _this.isDeleting = false;
+                _context.next = 13;
+                break;
 
-              case 6:
+              case 9:
+                _context.prev = 9;
+                _context.t0 = _context["catch"](1);
+
+                _this.err("Something went wrong!", "Oops!");
+
+                _this.isDeleting = false; // console.log(error);
+
+              case 13:
               case "end":
                 return _context.stop();
             }
           }
-        }, _callee);
+        }, _callee, null, [[1, 9]]);
       }))();
     },
     closeModal: function closeModal() {
@@ -20172,13 +20183,16 @@ function _asyncToGenerator(fn) { return function () { var self = this, args = ar
       this.editModal = true;
       this.index = index;
     },
-    showDeletingModal: function showDeletingModal(tag, i) {
+    showDeletingModal: function showDeletingModal(user, i) {
       var deleteModalObj = {
         deletingModal: true,
-        deleteUrl: 'admin/delete-tag',
-        data: tag,
+        deleteUrl: 'admin/delete-admin-user',
+        data: {
+          id: user.id
+        },
         deletingIndex: i,
-        isDeleted: false
+        isDeleted: false,
+        deletingItemMsg: 'Admin User'
       };
       this.$store.commit('setDeletingModalObj', deleteModalObj);
     }
@@ -20509,9 +20523,12 @@ function _asyncToGenerator(fn) { return function () { var self = this, args = ar
       var deleteModalObj = {
         deletingModal: true,
         deleteUrl: 'admin/delete-category',
-        data: category,
+        data: {
+          id: category.id
+        },
         deletingIndex: i,
-        isDeleted: false
+        isDeleted: false,
+        deletingItemMsg: 'Category'
       };
       this.$store.commit('setDeletingModalObj', deleteModalObj);
     }
@@ -20979,9 +20996,12 @@ function _asyncToGenerator(fn) { return function () { var self = this, args = ar
       var deleteModalObj = {
         deletingModal: true,
         deleteUrl: '/admin/delete-role',
-        data: item,
+        data: {
+          id: item.id
+        },
         deletingIndex: i,
-        isDeleted: false
+        isDeleted: false,
+        deletingItemMsg: 'Role'
       };
       this.$store.commit('setDeletingModalObj', deleteModalObj);
     }
@@ -21198,9 +21218,12 @@ function _asyncToGenerator(fn) { return function () { var self = this, args = ar
       var deleteModalObj = {
         deletingModal: true,
         deleteUrl: '/admin/delete-tag',
-        data: tag,
+        data: {
+          id: tag.id
+        },
         deletingIndex: i,
-        isDeleted: false
+        isDeleted: false,
+        deletingItemMsg: 'Tag'
       };
       this.$store.commit('setDeletingModalObj', deleteModalObj);
     }
@@ -21382,13 +21405,11 @@ var _hoisted_2 = /*#__PURE__*/(0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementV
 /* HOISTED */
 );
 
-var _hoisted_3 = /*#__PURE__*/(0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("div", {
+var _hoisted_3 = {
   style: {
     "text-align": "center"
   }
-}, [/*#__PURE__*/(0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("p", null, "Are you sure you want to delete?.")], -1
-/* HOISTED */
-);
+};
 
 var _hoisted_4 = /*#__PURE__*/(0,vue__WEBPACK_IMPORTED_MODULE_0__.createTextVNode)("Close");
 
@@ -21449,7 +21470,9 @@ function render(_ctx, _cache, $props, $setup, $data, $options) {
       , ["loading", "disabled", "onClick"])];
     }),
     "default": (0,vue__WEBPACK_IMPORTED_MODULE_0__.withCtx)(function () {
-      return [_hoisted_3];
+      return [(0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("div", _hoisted_3, [(0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("p", null, "Are you sure you want to delete " + (0,vue__WEBPACK_IMPORTED_MODULE_0__.toDisplayString)(_ctx.getDeleteModalObj.deletingItemMsg) + "?", 1
+      /* TEXT */
+      )])];
     }),
     _: 1
     /* STABLE */
