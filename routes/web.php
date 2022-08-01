@@ -1,11 +1,13 @@
 <?php
 
 use App\Http\Controllers\AdminUserController;
+use App\Http\Controllers\PayOrderController;
 use Illuminate\Support\Facades\Route;
 
 
 
 Route::get('/', [AdminUserController::class, 'index']);
+Route::get('/pay', [PayOrderController::class, 'store']);
 Route::post('login', [AdminUserController::class, 'adminLogin']);
 Route::get('logout', [AdminUserController::class, 'logout']);
 // Route::any('{slug?}', [AdminUserController::class, 'index'])->where('slug', '([A-z\d\-\/_.]+)?');
