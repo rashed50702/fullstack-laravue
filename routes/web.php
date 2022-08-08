@@ -7,7 +7,7 @@ use Illuminate\Support\Facades\Route;
 
 
 Route::get('/', [AdminUserController::class, 'index']);
-Route::get('/pay', [PayOrderController::class, 'store']);
+Route::get('/pay', [PayOrderController::class, 'store']);//for servicecontainer example
 Route::post('login', [AdminUserController::class, 'adminLogin']);
 Route::get('logout', [AdminUserController::class, 'logout']);
 // Route::any('{slug?}', [AdminUserController::class, 'index'])->where('slug', '([A-z\d\-\/_.]+)?');
