@@ -12,8 +12,8 @@ Route::prefix("admin")->middleware([AdminCheck::class])->group(function(){
     Route::controller(TagController::class)->group(function () {
         Route::get('tag-list', 'index');
         Route::post('tags', 'store');
-        Route::post('tag-edit', 'update');
-        Route::post('delete-tag', 'deleteTag');
+        Route::put('tag-edit/{id}', 'update');
+        Route::post('delete-tag', 'destroy');
     });
 
 

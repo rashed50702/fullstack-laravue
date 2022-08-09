@@ -5,8 +5,6 @@ namespace App\Providers;
 use App\Billing\BankPaymentGateway;
 use App\Billing\CreditPaymentGateway;
 use App\Billing\PaymentGatewayContract;
-use App\Repository\Tag\TagInterface;
-use App\Repository\Tag\TagRepository;
 use Illuminate\Support\ServiceProvider;
 
 class AppServiceProvider extends ServiceProvider
@@ -29,7 +27,7 @@ class AppServiceProvider extends ServiceProvider
             return new BankPaymentGateway('euro'); 
         });
 
-        $this->app->bind(TagInterface::class, TagRepository::class);
+        
     }
 
     /**

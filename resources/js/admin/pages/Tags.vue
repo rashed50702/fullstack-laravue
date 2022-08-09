@@ -71,7 +71,7 @@
                 </FormItem>
                 <footer class="text-right">
                     <Button type="default" size="small" @click="editModal = false">Cancel</Button>
-                    <Button type="success" size="small" class="ml-2" @click="updatingData" :disabled="isSaving"
+                    <Button type="success" size="small" class="ml-2" @click="updatingData(formDataEdit.id)" :disabled="isSaving"
                         :loading="isSaving">{{ isSaving ? 'Saving...' : 'Save' }}</Button>
                 </footer>
             </Form>
@@ -120,45 +120,46 @@ export default {
         async savingData() {
             if (this.formData.tagName.trim() == '')
                 return this.err('Tag name is required');
-
-            const res = await this.callAPI('post', 'admin/tags', this.formData)
-            if (res.status === 201) {
-                this.tags.unshift(res.data);
-                this.success("Tag saved successfully!");
-                this.modal = false;
-                this.formData.tagName = '';
-            } else {
-                if (res.status === 422) {
-                    let errors = res.data.errors;
-                    for (let field of Object.keys(errors)) {
-                        this.err(errors[field]);
+            
+            await this.callAPI('post', 'admin/tags', this.formData)
+                .then(response => {
+                    this.tags.unshift(response.data);
+                    this.success("Tag saved successfully!");
+                    this.modal = false;
+                    this.formData.tagName = '';
+                })
+                .catch(error => {
+                    if (error.response.status === 422){
+                        let errors = error.response.data.errors;
+                        for (let field of Object.keys(errors)) {
+                            this.err(errors[field]);
+                        }
+                    }else{
+                        this.err("Something went wrong!", "Oops!");
                     }
-                } else {
-                    this.err("Oops!", "Something went wrong!");
-                }
-            }
+                });
         },
 
-        async updatingData() {
+        async updatingData(id) {
             if (this.formDataEdit.tagName.trim() == '')
                 return this.err('Tag name is required');
 
-            const res = await this.callAPI('post', 'admin/tag-edit', this.formDataEdit)
-
-            if (res.status === 200) {
-                if (res.data.status === 422) {
-                    let errors = res.data.errors;
-                    for (let field of Object.keys(errors)) {
-                        this.err(errors[field]);
-                    }
-                } else {
+            await this.callAPI('put', 'admin/tag-edit/'+id, this.formDataEdit)
+                .then(response => {
                     this.tags[this.index].tagName = this.formDataEdit.tagName;
                     this.success("Tag updated successfully!");
                     this.editModal = false;
-                }
-            } else {
-                this.err("Oops!", "Something went wrong!");
-            }
+                })
+                .catch(error => {
+                    if (error.response.status === 422) {
+                        let errors = error.response.data.errors;
+                        for (let field of Object.keys(errors)) {
+                            this.err(errors[field]);
+                        }
+                    } else {
+                        this.err("Something went wrong!", "Oops!");
+                    }
+                });
         },
 
         showEditModal(tag, index) {

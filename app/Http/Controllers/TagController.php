@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Requests\TagRequest;
 use App\Models\Tag;
 use Illuminate\Http\Request;
 use App\Repository\Tag\TagInterface;
@@ -41,15 +42,8 @@ class TagController extends Controller
      * @param  \Illuminate\Http\Request  $request
      * @return \Illuminate\Http\Response
      */
-    public function store(Request $request)
+    public function store(TagRequest $request)
     {
-        $validator = Validator::make($request->all(), [
-            'tagName' => 'required|unique:tags',
-        ]);
-
-        if ($validator->fails()) {
-            return Response::json(['errors' => $validator->errors()->all(), 'status' => 422]);
-        }
         $data = $request->all();
         return $this->tags->storeData($data);
     }
@@ -83,34 +77,10 @@ class TagController extends Controller
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function update(Request $request)
+    public function update(TagRequest $request, $id)
     {
-        $validator = Validator::make($request->all(), [
-            'id' => 'required',
-            'tagName' => 'required|unique:tags,tagName,' . $request->id,
-
-        ]);
-
-        if ($validator->fails()) {
-            return Response::json(['errors' => $validator->errors()->all(), 'status' => 422]);
-        }
         $data = $request->all();
         return $this->tags->updateData($data);
-    }
-
-    public function deleteTag(Request $request)
-    {
-        $validator = Validator::make($request->all(), [
-            'id' => 'required',
-
-        ]);
-
-        if ($validator->fails()) {
-            return Response::json(['errors' => $validator->errors()->all(), 'status' => 422]);
-        }
-
-        $id = $request->id;
-        return $this->tags->deleteData($id);
     }
 
     /**
@@ -119,8 +89,9 @@ class TagController extends Controller
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function destroy($id)
+    public function destroy(Request $request)
     {
-        //
+        $id = $request->id;
+        return $this->tags->deleteData($id);
     }
 }
