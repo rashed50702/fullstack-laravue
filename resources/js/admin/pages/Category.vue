@@ -116,7 +116,7 @@
                 </div>
                 <footer class="text-right">
                     <Button type="default" size="small" @click="closeEditModal">Cancel</Button>
-                    <Button type="success" size="small" class="ml-2" @click="updatingData" :disabled="isSaving"
+                    <Button type="success" size="small" class="ml-2" @click="updatingData(formDataEdit.id)" :disabled="isSaving"
                         :loading="isSaving">{{ isSaving ? 'Saving...' : 'Save' }}</Button>
                 </footer>
             </Form>
@@ -222,27 +222,28 @@ export default {
                 return this.err('Icon image is required');
             this.formData.iconImage = `${this.formData.iconImage}`;
 
-            const res = await this.callAPI('post', 'admin/category-save', this.formData)
-            if (res.status === 201) {
-                this.categories.unshift(res.data);
-                this.success("Category saved successfully!");
-                this.modal = false;
-                this.formData.categoryName = '';
-                this.formData.iconImage = '';
-                this.$refs.clearUpload.clearFiles();
-            } else {
-                if (res.status === 422) {
-                    let errors = res.data.errors;
-                    for (let field of Object.keys(errors)) {
-                        this.err(errors[field]);
+            await this.callAPI('post', 'admin/category-save', this.formData)
+                .then(response => {
+                    this.categories.unshift(response.data);
+                    this.success("Category saved successfully!");
+                    this.modal = false;
+                    this.formData.categoryName = '';
+                    this.formData.iconImage = '';
+                    this.$refs.clearUpload.clearFiles();
+                })
+                .catch(error => {
+                    if (error.response.status === 422) {
+                        let errors = error.response.data.errors;
+                        for (let field of Object.keys(errors)) {
+                            this.err(errors[field]);
+                        }
+                    } else {
+                        this.err("Something went wrong!", "Oops!");
                     }
-                } else {
-                    this.err("Oops!", "Something went wrong!");
-                }
-            }
+                });
         },
 
-        async updatingData() {
+        async updatingData(id) {
             if (this.formDataEdit.categoryName.trim() == '')
                 return this.err('Category name is required');
             if (this.formDataEdit.iconImage.trim() == '')
@@ -250,22 +251,22 @@ export default {
 
             this.formDataEdit.iconImage = `${this.formDataEdit.iconImage}`;
 
-            const res = await this.callAPI('post', 'admin/category-update', this.formDataEdit)
-
-            if (res.status === 200) {
-                if (res.data.status === 422) {
-                    let errors = res.data.errors;
-                    for (let field of Object.keys(errors)) {
-                        this.err(errors[field]);
-                    }
-                } else {
+            await this.callAPI('put', 'admin/category-update/' + id, this.formDataEdit)
+                .then(response => {
                     this.categories[this.index].categoryName = this.formDataEdit.categoryName;
                     this.success("Category updated successfully!");
                     this.editModal = false;
-                }
-            } else {
-                this.err("Oops!", "Something went wrong!");
-            }
+                })
+                .catch(error => {
+                    if (error.response.status === 422) {
+                        let errors = error.response.data.errors;
+                        for (let field of Object.keys(errors)) {
+                            this.err(errors[field]);
+                        }
+                    } else {
+                        this.err("Something went wrong!", "Oops!");
+                    }
+                });
         },
 
         showEditModal(category, index) {
@@ -286,14 +287,13 @@ export default {
         closeEditModal(){
             this.isEditingItem = false;
             this.editModal = false;
-
         },
 
         showDeletingModal(category, i) {
             const deleteModalObj = {
                 deletingModal: true,
                 deleteUrl: 'admin/delete-category',
-                data: {id:category.id},
+                data: {id:category.id, iconImage:category.iconImage},
                 deletingIndex: i,
                 isDeleted: false,
                 deletingItemMsg: 'Category'

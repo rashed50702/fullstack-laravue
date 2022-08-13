@@ -4,11 +4,26 @@ namespace App\Http\Controllers;
 
 use App\Models\Category;
 use Illuminate\Http\Request;
+use App\Traits\ImageUploadTrait;
+use App\Http\Requests\CategoryRequest;
 use Illuminate\Support\Facades\Response;
+use App\Http\Requests\ImageUploadRequest;
+use App\Repository\Category\CategoryInterface;
 use Illuminate\Support\Facades\Validator;
 
 class CategoryController extends Controller
 {
+    use ImageUploadTrait;
+
+    private $categories;
+
+    public function __construct(CategoryInterface $categoryRepository)
+    {
+        $this->categories = $categoryRepository;
+    }
+
+
+
     /**
      * Display a listing of the resource.
      *
@@ -16,19 +31,13 @@ class CategoryController extends Controller
      */
     public function index()
     {
-        return Category::orderBy('id', 'desc')->get();
+        return $this->categories->getAllData();
     }
 
 
-    public function imgUpload(Request $request)
+    public function imgUpload(ImageUploadRequest $request)
     {
-        $this->validate($request, [
-            'file' => 'required|mimes:jpg,jpeg,png'
-        ]);
-
-        $picName = time().'.'.$request->file->extension();
-        $request->file->move(public_path('uploads'), $picName);
-        return $picName;
+        return $this->CategoryImageUpload($request->file);//Passing file as parameter to trait   
     }
 
     public function deleteImage(Request $request)
@@ -63,22 +72,10 @@ class CategoryController extends Controller
      * @param  \Illuminate\Http\Request  $request
      * @return \Illuminate\Http\Response
      */
-    public function store(Request $request)
+    public function store(CategoryRequest $request)
     {
-        $validator = Validator::make($request->all(), [
-            'categoryName' => 'required|unique:categories',
-            'iconImage' => 'required',
-        ]);
-
-        if ($validator->fails()) {
-            return Response::json(['errors' => $validator->errors()->all(), 'status' => 422]);
-        }
-        $data = Category::create([
-            'categoryName' => $request->categoryName,
-            'iconImage' => $request->iconImage,
-        ]);
-
-        return $data;
+        $data = $request->all();
+        return $this->categories->storeData($data);
     }
 
     /**
@@ -110,22 +107,10 @@ class CategoryController extends Controller
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function update(Request $request)
+    public function update(CategoryRequest $request, $id)
     {
-        $validator = Validator::make($request->all(), [
-            'categoryName' => 'required|unique:categories,categoryName,' . $request->id,
-            'iconImage' => 'required',
-        ]);
-
-        if ($validator->fails()) {
-            return Response::json(['errors' => $validator->errors()->all(), 'status' => 422]);
-        }
-        $data = Category::where('id', $request->id)->update([
-            'categoryName' => $request->categoryName,
-            'iconImage' => $request->iconImage,
-        ]);
-
-        return $data;
+        $data = $request->all();
+        return $this->categories->updateData($data);
     }
 
     /**
@@ -137,6 +122,7 @@ class CategoryController extends Controller
     public function destroy(Request $request)
     {
         $this->deleteFileFromServer($request->iconImage);
-        return Category::where('id', $request->id)->delete();
+        $id = $request->id;
+        return $this->categories->deleteData($id);
     }
 }

@@ -1,7 +1,7 @@
 ## About This Project
 
-### Laravel
-### VueJS
+### Laravel + VueJS Together
+
 Covered in this project:
 
 - User Roles & Permissions

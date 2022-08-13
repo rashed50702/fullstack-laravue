@@ -20378,8 +20378,6 @@ function _asyncToGenerator(fn) { return function () { var self = this, args = ar
       var _this3 = this;
 
       return _asyncToGenerator( /*#__PURE__*/_regeneratorRuntime().mark(function _callee3() {
-        var res, errors, _i, _Object$keys, field;
-
         return _regeneratorRuntime().wrap(function _callee3$(_context3) {
           while (1) {
             switch (_context3.prev = _context3.next) {
@@ -20402,13 +20400,8 @@ function _asyncToGenerator(fn) { return function () { var self = this, args = ar
               case 4:
                 _this3.formData.iconImage = "".concat(_this3.formData.iconImage);
                 _context3.next = 7;
-                return _this3.callAPI('post', 'admin/category-save', _this3.formData);
-
-              case 7:
-                res = _context3.sent;
-
-                if (res.status === 201) {
-                  _this3.categories.unshift(res.data);
+                return _this3.callAPI('post', 'admin/category-save', _this3.formData).then(function (response) {
+                  _this3.categories.unshift(response.data);
 
                   _this3.success("Category saved successfully!");
 
@@ -20417,21 +20410,21 @@ function _asyncToGenerator(fn) { return function () { var self = this, args = ar
                   _this3.formData.iconImage = '';
 
                   _this3.$refs.clearUpload.clearFiles();
-                } else {
-                  if (res.status === 422) {
-                    errors = res.data.errors;
+                })["catch"](function (error) {
+                  if (error.response.status === 422) {
+                    var errors = error.response.data.errors;
 
-                    for (_i = 0, _Object$keys = Object.keys(errors); _i < _Object$keys.length; _i++) {
-                      field = _Object$keys[_i];
+                    for (var _i = 0, _Object$keys = Object.keys(errors); _i < _Object$keys.length; _i++) {
+                      var field = _Object$keys[_i];
 
                       _this3.err(errors[field]);
                     }
                   } else {
-                    _this3.err("Oops!", "Something went wrong!");
+                    _this3.err("Something went wrong!", "Oops!");
                   }
-                }
+                });
 
-              case 9:
+              case 7:
               case "end":
                 return _context3.stop();
             }
@@ -20439,12 +20432,10 @@ function _asyncToGenerator(fn) { return function () { var self = this, args = ar
         }, _callee3);
       }))();
     },
-    updatingData: function updatingData() {
+    updatingData: function updatingData(id) {
       var _this4 = this;
 
       return _asyncToGenerator( /*#__PURE__*/_regeneratorRuntime().mark(function _callee4() {
-        var res, errors, _i2, _Object$keys2, field;
-
         return _regeneratorRuntime().wrap(function _callee4$(_context4) {
           while (1) {
             switch (_context4.prev = _context4.next) {
@@ -20467,32 +20458,27 @@ function _asyncToGenerator(fn) { return function () { var self = this, args = ar
               case 4:
                 _this4.formDataEdit.iconImage = "".concat(_this4.formDataEdit.iconImage);
                 _context4.next = 7;
-                return _this4.callAPI('post', 'admin/category-update', _this4.formDataEdit);
+                return _this4.callAPI('put', 'admin/category-update/' + id, _this4.formDataEdit).then(function (response) {
+                  _this4.categories[_this4.index].categoryName = _this4.formDataEdit.categoryName;
 
-              case 7:
-                res = _context4.sent;
+                  _this4.success("Category updated successfully!");
 
-                if (res.status === 200) {
-                  if (res.data.status === 422) {
-                    errors = res.data.errors;
+                  _this4.editModal = false;
+                })["catch"](function (error) {
+                  if (error.response.status === 422) {
+                    var errors = error.response.data.errors;
 
-                    for (_i2 = 0, _Object$keys2 = Object.keys(errors); _i2 < _Object$keys2.length; _i2++) {
-                      field = _Object$keys2[_i2];
+                    for (var _i2 = 0, _Object$keys2 = Object.keys(errors); _i2 < _Object$keys2.length; _i2++) {
+                      var field = _Object$keys2[_i2];
 
                       _this4.err(errors[field]);
                     }
                   } else {
-                    _this4.categories[_this4.index].categoryName = _this4.formDataEdit.categoryName;
-
-                    _this4.success("Category updated successfully!");
-
-                    _this4.editModal = false;
+                    _this4.err("Something went wrong!", "Oops!");
                   }
-                } else {
-                  _this4.err("Oops!", "Something went wrong!");
-                }
+                });
 
-              case 9:
+              case 7:
               case "end":
                 return _context4.stop();
             }
@@ -20524,7 +20510,8 @@ function _asyncToGenerator(fn) { return function () { var self = this, args = ar
         deletingModal: true,
         deleteUrl: 'admin/delete-category',
         data: {
-          id: category.id
+          id: category.id,
+          iconImage: category.iconImage
         },
         deletingIndex: i,
         isDeleted: false,
@@ -22341,7 +22328,7 @@ function render(_ctx, _cache, $props, $setup, $data, $options) {
   /* PROPS */
   , ["modelValue"]), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createCommentVNode)("Editing Modal"), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createVNode)(_component_Modal, {
     modelValue: $data.editModal,
-    "onUpdate:modelValue": _cache[6] || (_cache[6] = function ($event) {
+    "onUpdate:modelValue": _cache[7] || (_cache[7] = function ($event) {
       return $data.editModal = $event;
     }),
     title: "Edit Category",
@@ -22424,7 +22411,9 @@ function render(_ctx, _cache, $props, $setup, $data, $options) {
             type: "success",
             size: "small",
             "class": "ml-2",
-            onClick: $options.updatingData,
+            onClick: _cache[6] || (_cache[6] = function ($event) {
+              return $options.updatingData($data.formDataEdit.id);
+            }),
             disabled: $data.isSaving,
             loading: $data.isSaving
           }, {
@@ -22438,7 +22427,7 @@ function render(_ctx, _cache, $props, $setup, $data, $options) {
 
           }, 8
           /* PROPS */
-          , ["onClick", "disabled", "loading"])])];
+          , ["disabled", "loading"])])];
         }),
         _: 1
         /* STABLE */

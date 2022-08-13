@@ -5,7 +5,7 @@ namespace App\Http\Requests;
 use Illuminate\Validation\Rule;
 use Illuminate\Foundation\Http\FormRequest;
 
-class TagRequest extends FormRequest
+class CategoryRequest extends FormRequest
 {
     /**
      * Determine if the user is authorized to make this request.
@@ -15,7 +15,6 @@ class TagRequest extends FormRequest
     public function authorize()
     {
         return true;
-        // return $this->user()->can('create');
     }
 
     /**
@@ -26,11 +25,12 @@ class TagRequest extends FormRequest
     public function rules()
     {
         return [
-            'tagName' => [
+            'categoryName' => [
                 'required',
                 'max:255',
-                Rule::unique('tags', 'tagName')->ignore($this->id)
-            ]
+                Rule::unique('categories', 'categoryName')->ignore($this->id)
+            ],
+            'iconImage' => 'required',
         ];
     }
 }

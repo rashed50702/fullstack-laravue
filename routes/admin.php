@@ -21,7 +21,7 @@ Route::prefix("admin")->middleware([AdminCheck::class])->group(function(){
         Route::post('category-img-upload', 'imgUpload');
         Route::post('delete-image', 'deleteImage');
         Route::post('category-save', 'store');
-        Route::post('category-update', 'update');
+        Route::put('category-update/{id}', 'update');
         Route::get('categories-list', 'index');
         Route::post('delete-category', 'destroy');
     });

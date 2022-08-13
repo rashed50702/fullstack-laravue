@@ -1,11 +1,10 @@
 <?php
 
-namespace App\Http\Requests;
+namespace {{ namespace }};
 
-use Illuminate\Validation\Rule;
 use Illuminate\Foundation\Http\FormRequest;
 
-class TagRequest extends FormRequest
+class {{ class }} extends FormRequest
 {
     /**
      * Determine if the user is authorized to make this request.
@@ -14,8 +13,7 @@ class TagRequest extends FormRequest
      */
     public function authorize()
     {
-        return true;
-        // return $this->user()->can('create');
+        return false;
     }
 
     /**
@@ -26,11 +24,7 @@ class TagRequest extends FormRequest
     public function rules()
     {
         return [
-            'tagName' => [
-                'required',
-                'max:255',
-                Rule::unique('tags', 'tagName')->ignore($this->id)
-            ]
+            //
         ];
     }
 }
